@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
     const int N = 500;
-    const int R = 1;
+    const int R = 100;
     int* A = initialise(N);
     
 
