@@ -95,7 +95,7 @@ int get_results(int node_count)
     return counter;
 }
 
-void send_result(result)
+void send_result(int result)
 {
     MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 }
