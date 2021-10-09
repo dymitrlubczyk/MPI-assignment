@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &node_count);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
-    id == 0 ? master(N, R) : worker(N, R);
+    id == 0 ? master(N, R, node_count) : worker(N, R, node_count, id);
     
     MPI_Finalize();
 
@@ -37,9 +37,9 @@ void master(int N, int R, int node_count)
     for (int i = 0; i < task_size; ++i)
     {
         counter += test(A[i]);
-        counter += get_results();
+        counter += get_results(node_count);
 
-        if (send_stop(counter >= R))
+        if (send_stop(counter >= R, node_count))
             break;
     }
 
@@ -72,7 +72,7 @@ int get_stop()
     return stop;
 }
 
-int send_stop(int stop)
+int send_stop(int stop, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
     {
