@@ -33,7 +33,6 @@ void master(int N, int R, int node_count)
 
     int task_size = send_tasks(A, N, node_count);
 
-    printf("Master starts\n");
     for (int i = 0; i < task_size; ++i)
     {
         counter += test(A[i]);
@@ -44,13 +43,11 @@ void master(int N, int R, int node_count)
     }
 
     end = MPI_Wtime();
-    printf("Master ends, execution time: %fs\n", end-start);
+    printf("Execution time: %fs\n", end-start);
 }
 
 void worker(int N, int R, int node_count, int id)
 {
-    printf("Node %d starts\n", id);
-
     int task_size = N / node_count;
     int *task = get_task(task_size);
 
@@ -62,7 +59,6 @@ void worker(int N, int R, int node_count, int id)
             break;
     }
 
-    printf("Node %d ends\n", id);
 }
 
 int get_stop()
@@ -109,7 +105,6 @@ int *get_task(int task_size)
 
 int send_tasks(int *A, int N, int node_count)
 {
-    printf("Master sends tasks\n");
     int task_size = N / node_count;
     int master_task_size = N - (node_count - 1) * task_size;
 
