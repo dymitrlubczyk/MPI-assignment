@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
     const int N = 500;
-    const int R = 50;
+    const int R = 100;
 
     int id, node_count;
     MPI_Init(&argc, &argv);
@@ -68,13 +68,7 @@ void worker(int N, int R, int node_count, int id)
 int get_stop(MPI_Request request)
 {
     int flag = 0;
-    MPI_Status status;
-
-   
-    MPI_Test(&request, &flag, &status);
-    printf("Flag: %d, Error: %d\n", flag, status.MPI_ERROR);
-    if(flag)
-        printf("Got stop signal\n");
+    MPI_Test(&request, &flag, MPI_STATUS_IGNORE);
 
     return flag;
 }
