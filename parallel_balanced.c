@@ -104,10 +104,7 @@ int get_results(int node_count)
 
 void send_result(int result)
 {
-    if(result){
-        printf("Sending result\n");
-        MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-    }
+    MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 }
 
 int *get_task(int task_size)
