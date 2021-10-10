@@ -44,7 +44,7 @@ void master(int N, int R, int node_count)
 
     MPI_Barrier(MPI_COMM_WORLD);
     end = MPI_Wtime();
-    
+
     printf("Execution time: %fs\n", end-start);
     printf("Counter: %d\n", counter);
 }
@@ -59,8 +59,8 @@ void worker(int N, int R, int node_count, int id)
         send_result(test(task[i]));
     }
 
+    printf("Worker %d finished, checked %d/%d \n", id, i, task_size);
     MPI_Barrier(MPI_COMM_WORLD);
-    printf("Worker %d finished, checked &d/%d \n", id, i, task_size);
 }
 
 int get_stop()
