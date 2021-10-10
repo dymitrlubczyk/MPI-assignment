@@ -102,7 +102,7 @@ int get_results(int node_count)
 
         MPI_Irecv(&results[i], 1, MPI_INT, i, 0, MPI_COMM_WORLD, &requests[i]);
         MPI_Test(&requests[i], &flags[i],  &status);
-         printf("Flag: %d, Result: %d, Source: %d\n", flag, *result, status.MPI_SOURCE);
+         printf("Flag: %d, Result: %d, Source: %d\n", flags[i], results[i], status.MPI_SOURCE);
         if(flags[i])
             counter += 1;
     }
