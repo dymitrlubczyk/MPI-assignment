@@ -1,3 +1,4 @@
+#include "mpi.h"
 
 void master(int N, int R, int node_count);
 void worker(int N, int R, int node_count, int id);

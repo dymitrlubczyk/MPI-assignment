@@ -4,7 +4,6 @@
 
 #include "test_mpi.h"
 #include "parallel_balanced.h"
-#include "mpi.h"
 
 int main(int argc, char *argv[])
 {
