@@ -67,11 +67,11 @@ void worker(int N, int R, int node_count, int id)
 
 int get_stop()
 {
-    int flag = 0;
+    int result, flag = 0;
     MPI_Request request;
     MPI_Status status;
 
-    MPI_Irecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
+    MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
     MPI_Test(&request, &flag, &status);
 
     return flag;
