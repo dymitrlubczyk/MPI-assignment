@@ -71,7 +71,7 @@ int get_stop()
     MPI_Request request;
     MPI_Status status;
 
-    MPI_IRecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
+    MPI_Irecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
     MPI_Test(&request, &flag, &status);
 
     return flag;
