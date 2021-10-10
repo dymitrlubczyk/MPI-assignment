@@ -92,18 +92,18 @@ void send_stop(int node_count)
 int get_results(int node_count)
 {
     int counter = 0;
+    int flag = calloc(node_count, sizeof(int));
+    int* results = calloc(node_count, sizeof(int));
+    MPI_Request requests = calloc(node_count, sizeof(MPI_Request));
 
     for (int i = 1; i < node_count; ++i)
     {
-        int flag = 0;
-        int* result = calloc(1, sizeof(int));;
-        MPI_Request request;
         MPI_Status status;
 
-        MPI_Irecv(result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
-        MPI_Test(&request, &flag,  &status);
+        MPI_Irecv(&results[i], 1, MPI_INT, i, 0, MPI_COMM_WORLD, &requests[i]);
+        MPI_Test(&requests[i], &flags[i],  &status);
          printf("Flag: %d, Result: %d, Source: %d\n", flag, *result, status.MPI_SOURCE);
-        if(flag)
+        if(flags[i])
             counter += 1;
     }
 
