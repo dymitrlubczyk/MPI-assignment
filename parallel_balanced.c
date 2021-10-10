@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     const int N = 500;
-    const int R = 100;
+    const int R = 50;
 
     int id, node_count;
     MPI_Init(&argc, &argv);
@@ -71,7 +71,7 @@ int get_stop()
 
     MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
     MPI_Test(&request, &flag, &status);
-
+    printf("Result: %d, Error: %d", result, status.MPI_ERROR);
     if(flag)
         printf("Got stop signal\n");
 
