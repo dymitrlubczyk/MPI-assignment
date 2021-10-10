@@ -42,15 +42,16 @@ void master(int N, int R, int node_count)
 
     send_stop(node_count);
 
+    MPI_Barrier(MPI_COMM_WORLD);
     end = MPI_Wtime();
+    
     printf("Execution time: %fs\n", end-start);
     printf("Counter: %d\n", counter);
 }
 
 void worker(int N, int R, int node_count, int id)
 {
-    int task_size = N / node_count;
-    int i;
+    int i, task_size = N / node_count;
     int *task = get_task(task_size);
 
     for (i = 0; i < task_size && !get_stop(); ++i)
@@ -58,7 +59,8 @@ void worker(int N, int R, int node_count, int id)
         send_result(test(task[i]));
     }
 
-    printf("Worker %d finished, checked %d/%d\n", id, i, task_size);
+    MPI_Barrier(MPI_COMM_WORLD);
+    printf("Worker %d finished, checked &d/%d \n", id, i, task_size);
 }
 
 int get_stop()
@@ -138,6 +140,6 @@ int send_tasks(int *A, int N, int node_count)
 int *initialise(int N)
 {
     int *A = allocate_mem(N);
-    fill_ascending(A, N);
+    fill_random(A, N);
     return A;
 }
