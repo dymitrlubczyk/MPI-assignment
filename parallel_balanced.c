@@ -35,6 +35,7 @@ void master(int N, int R, int node_count)
 
     for (int i = 0; i < task_size; ++i)
     {
+
         counter += test(A[i]);
         counter += get_results(node_count);
 
@@ -55,13 +56,14 @@ void worker(int N, int R, int node_count, int id)
 
     for (int i = 0; i < task_size; ++i)
     {
+        MPI_Barrier(MPI_COMM_WORLD);
+
         send_result(test(task[i]));
 
         if (get_stop())
-            return;
+            break;
     }
 
-    while (!get_stop());
     printf("Worker %d finished", id);
 }
 
@@ -83,7 +85,8 @@ void send_stop(int node_count)
     for (int i = 1; i < node_count; ++i)
     {
         int stop = 1;
-        MPI_Send(&stop, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+        MPI_Request request;
+        MPI_Isend(&stop, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
     }
 }
 
@@ -93,8 +96,15 @@ int get_results(int node_count)
 
     for (int i = 1; i < node_count; ++i)
     {
-        MPI_Recv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        counter += result;
+        int flag = 0;
+        MPI_Request request;
+        MPI_Status status;
+
+        MPI_Irecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
+        MPI_Test(&request, &flag, &status);
+
+        if(flag)
+            counter += result;
     }
 
     return counter;
@@ -102,7 +112,10 @@ int get_results(int node_count)
 
 void send_result(int result)
 {
-    MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    if(result){
+        MPI_Request request;
+        MPI_Isend(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
+    }
 }
 
 int *get_task(int task_size)
