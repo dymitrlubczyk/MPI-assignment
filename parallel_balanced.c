@@ -50,14 +50,15 @@ void master(int N, int R, int node_count)
 void worker(int N, int R, int node_count, int id)
 {
     int task_size = N / node_count;
+    int i;
     int *task = get_task(task_size);
 
-    for (int i = 0; i < task_size && !get_stop(); ++i)
+    for (i = 0; i < task_size && !get_stop(); ++i)
     {
         send_result(test(task[i]));
     }
 
-    printf("Worker %d finished\n", id);
+    printf("Worker %d finished, checked %d/%d\n", id, i, task_size);
 }
 
 int get_stop()
@@ -69,10 +70,10 @@ int get_stop()
     MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
     MPI_Test(&request, &flag, &status);
 
-    if(result)
+    if(flag)
         printf("Got stop signal\n");
 
-    return result;
+    return flag;
 }
 
 void send_stop(int node_count)
@@ -137,6 +138,6 @@ int send_tasks(int *A, int N, int node_count)
 int *initialise(int N)
 {
     int *A = allocate_mem(N);
-    fill_random(A, N);
+    fill_ascending(A, N);
     return A;
 }
