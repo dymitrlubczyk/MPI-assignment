@@ -29,24 +29,22 @@ void master(int N, int R, int node_count)
     int counter = 0;
     int *A = initialise(N);
     
-    start = MPI_Wtime();
 
     int task_size = send_tasks(A, N, node_count);
 
-    for (int i = 0; i < task_size; ++i)
-    {
+    start = MPI_Wtime();
 
+    for (int i = 0; i < task_size && counter<R; ++i)
+    {
         counter += test(A[i]);
         counter += get_results(node_count);
-
-        if (counter >= R){
-            send_stop(node_count);
-            break;
-        }
     }
+
+    send_stop(node_count);
 
     end = MPI_Wtime();
     printf("Execution time: %fs\n", end-start);
+    printf("Counter: %d\n", counter);
 }
 
 void worker(int N, int R, int node_count, int id)
@@ -54,17 +52,12 @@ void worker(int N, int R, int node_count, int id)
     int task_size = N / node_count;
     int *task = get_task(task_size);
 
-    for (int i = 0; i < task_size; ++i)
+    for (int i = 0; i < task_size && !get_stop(); ++i)
     {
-        MPI_Barrier(MPI_COMM_WORLD);
-
         send_result(test(task[i]));
-
-        if (get_stop())
-            break;
     }
 
-    printf("Worker %d finished", id);
+    printf("Worker %d finished\n", id);
 }
 
 int get_stop()
@@ -75,6 +68,9 @@ int get_stop()
 
     MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
     MPI_Test(&request, &flag, &status);
+
+    if(result)
+        printf("Got stop signal\n");
 
     return result;
 }
