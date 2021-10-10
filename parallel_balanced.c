@@ -84,8 +84,7 @@ void send_stop(int node_count)
     for (int i = 1; i < node_count; ++i)
     {
         int stop = 1;
-        MPI_Request request;
-        MPI_Isend(&stop, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
+        MPI_Send(&stop, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
     }
 }
 
