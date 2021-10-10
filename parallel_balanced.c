@@ -72,10 +72,10 @@ int get_stop()
     MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
     MPI_Test(&request, &flag, &status);
     printf("Result: %d, Error: %d\n", result, status.MPI_ERROR);
-    if(flag)
+    if(result)
         printf("Got stop signal\n");
 
-    return flag;
+    return result;
 }
 
 void send_stop(int node_count)
