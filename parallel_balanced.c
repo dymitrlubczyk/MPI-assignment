@@ -101,7 +101,7 @@ int get_results(int node_count)
 
         MPI_Irecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
         MPI_Test(&request, &flag,  MPI_STATUS_IGNORE);
-
+         printf("Flag: %d, Result: %d, Process: %d\n", flag, result, i);
         if(flag)
             counter += 1;
     }
