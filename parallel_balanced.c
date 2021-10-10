@@ -96,13 +96,13 @@ int get_results(int node_count)
     for (int i = 1; i < node_count; ++i)
     {
         int flag = 0;
-        int result = 0;
+        int* result = calloc(1, sizeof(int));;
         MPI_Request request;
         MPI_Status status;
 
-        MPI_Irecv(*result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, *request);
-        MPI_Test(*request, *flag,  *status);
-         printf("Flag: %d, Result: %d, Source: %d\n", flag, result, status.MPI_SOURCE);
+        MPI_Irecv(result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
+        MPI_Test(&request, &flag,  &status);
+         printf("Flag: %d, Result: %d, Source: %d\n", flag, *result, status.MPI_SOURCE);
         if(flag)
             counter += 1;
     }
