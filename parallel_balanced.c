@@ -94,7 +94,7 @@ int get_results(MPI_Request* requests, int node_count)
         
         if(flag){
             counter += 1;
-            MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &requests[i]);
+            MPI_Irecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &requests[i]);
         }
     }
 
@@ -132,7 +132,7 @@ MPI_Request* initialise_requests(int node_count){
     
     for(int i=1; i<node_count; ++i){
         int result;
-        MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &requests[i]);
+        MPI_Irecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &requests[i]);
     }
 
     return requests;
