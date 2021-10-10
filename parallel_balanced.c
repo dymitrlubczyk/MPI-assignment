@@ -103,7 +103,7 @@ int get_results(int node_count)
         MPI_Test(&request, &flag, &status);
 
         if(flag)
-            counter += result;
+            counter += 1;
     }
 
     return counter;
