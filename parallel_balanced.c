@@ -112,8 +112,7 @@ int get_results(int node_count)
 void send_result(int result)
 {
     if(result){
-        MPI_Request request;
-        MPI_Isend(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
+        MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
     }
 }
 
