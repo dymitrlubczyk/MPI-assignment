@@ -51,10 +51,13 @@ void master(int N, int R, int node_count)
 
 void worker(int N, int R, int node_count, int id)
 {
-    int i, task_size = N / node_count;
+    int i, result, task_size = N / node_count;
     int *task = get_task(task_size);
+    
+    MPI_Request request;
+    MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
 
-    for (i = 0; i < task_size && !get_stop(); ++i)
+    for (i = 0; i < task_size && !get_stop(request); ++i)
     {
         send_result(test(task[i]));
     }
@@ -63,19 +66,18 @@ void worker(int N, int R, int node_count, int id)
     MPI_Barrier(MPI_COMM_WORLD);
 }
 
-int get_stop()
+int get_stop(MPI_Request request)
 {
-    int result, flag = 0;
-    MPI_Request request;
+    int flag = 0;
     MPI_Status status;
 
-    MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
+   
     MPI_Test(&request, &flag, &status);
-    printf("Result: %d, Error: %d\n", result, status.MPI_ERROR);
-    if(result)
+    printf("Flag: %d, Error: %d\n", flag, status.MPI_ERROR);
+    if(flag)
         printf("Got stop signal\n");
 
-    return result;
+    return flag;
 }
 
 void send_stop(int node_count)
