@@ -38,8 +38,10 @@ void master(int N, int R, int node_count)
         counter += test(A[i]);
         counter += get_results(node_count);
 
-        if (send_stop(counter >= R, node_count))
+        if (counter >= R){
+            send_stop(node_count);
             break;
+        }
     }
 
     end = MPI_Wtime();
@@ -56,36 +58,50 @@ void worker(int N, int R, int node_count, int id)
         send_result(test(task[i]));
 
         if (get_stop())
-            break;
+            return;
     }
+
+    while (!get_stop());
 
 }
 
 int get_stop()
 {
-    int stop;
-    MPI_Recv(&stop, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    return stop;
+    int flag = 0;
+    MPI_Request request;
+    MPI_Status status;
+
+    MPI_IRecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
+    MPI_Test(&request, &flag, &status);
+
+    return flag;
 }
 
-int send_stop(int stop, int node_count)
+void send_stop(int node_count)
 {
+    int stop = 1;
+
     for (int i = 1; i < node_count; ++i)
     {
         MPI_Send(&stop, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
     }
-
-    return stop;
 }
 
 int get_results(int node_count)
 {
     int result, counter = 0;
-
+    
     for (int i = 1; i < node_count; ++i)
     {
-        MPI_Recv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        counter += result;
+        int flag = 0;
+        MPI_Request request;
+        MPI_Status status;
+
+        MPI_IRecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
+        MPI_Test(&request, &flag, &status)
+        
+        if(flag)
+            counter += 1;
     }
 
     return counter;
@@ -93,7 +109,8 @@ int get_results(int node_count)
 
 void send_result(int result)
 {
-    MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    if(result)
+        MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 }
 
 int *get_task(int task_size)
