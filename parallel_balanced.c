@@ -41,7 +41,6 @@ void master(int N, int R, int node_count)
 
     send_stop(node_count);
 
-    MPI_Barrier(MPI_COMM_WORLD);
     end = MPI_Wtime();
 
     printf("Execution time: %fs\n", end-start);
@@ -62,7 +61,6 @@ void worker(int N, int R, int node_count, int id)
     }
 
     printf("Worker %d finished, checked %d/%d \n", id, i, task_size);
-    MPI_Barrier(MPI_COMM_WORLD);
 }
 
 int get_stop(MPI_Request request)
@@ -124,6 +122,6 @@ int send_tasks(int *A, int N, int node_count)
 int *initialise(int N)
 {
     int *A = allocate_mem(N);
-    fill_ascending(A, N);
+    fill_random(A, N);
     return A;
 }
