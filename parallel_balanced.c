@@ -140,6 +140,6 @@ int send_tasks(int *A, int N, int node_count)
 int *initialise(int N)
 {
     int *A = allocate_mem(N);
-    fill_random(A, N);
+    fill_ascending(A, N);
     return A;
 }
