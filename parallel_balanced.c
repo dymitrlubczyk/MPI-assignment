@@ -50,13 +50,13 @@ void master(int N, int R, int node_count)
 
 void worker(int N, int R, int node_count, int id)
 {
-    int result, task_size = N / node_count;
+    int i, result, task_size = N / node_count;
     int *task = get_task(task_size);
     
     MPI_Request request;
     MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
 
-    for (int i = 0; i < task_size && !get_stop(request); ++i)
+    for (i = 0; i < task_size && !get_stop(request); ++i)
     {
         send_result(test(task[i]));
     }
