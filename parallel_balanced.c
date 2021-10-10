@@ -90,18 +90,11 @@ void send_stop(int node_count)
 int get_results(int node_count)
 {
     int result, counter = 0;
-    
+
     for (int i = 1; i < node_count; ++i)
     {
-        int flag = 0;
-        MPI_Request request;
-        MPI_Status status;
-
-        MPI_IRecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &request);
-        MPI_Test(&request, &flag, &status)
-        
-        if(flag)
-            counter += 1;
+        MPI_Recv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        counter += result;
     }
 
     return counter;
@@ -109,8 +102,7 @@ int get_results(int node_count)
 
 void send_result(int result)
 {
-    if(result)
-        MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 }
 
 int *get_task(int task_size)
