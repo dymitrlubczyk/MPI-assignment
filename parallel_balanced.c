@@ -92,9 +92,9 @@ void send_stop(int node_count)
 int get_results(int node_count)
 {
     int counter = 0;
-    int flag = calloc(node_count, sizeof(int));
+    int* flags = calloc(node_count, sizeof(int));
     int* results = calloc(node_count, sizeof(int));
-    MPI_Request requests = calloc(node_count, sizeof(MPI_Request));
+    MPI_Request* requests = calloc(node_count, sizeof(MPI_Request));
 
     for (int i = 1; i < node_count; ++i)
     {
