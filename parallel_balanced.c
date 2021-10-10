@@ -100,8 +100,8 @@ int get_results(int node_count)
         MPI_Request request;
         MPI_Status status;
 
-        MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &request);
-        MPI_Test(&request, &flag,  &status);
+        MPI_Irecv(*result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, *request);
+        MPI_Test(*request, *flag,  *status);
          printf("Flag: %d, Result: %d, Source: %d\n", flag, result, status.MPI_SOURCE);
         if(flag)
             counter += 1;
