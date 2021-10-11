@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 
     id == 0 ? master(N, R, node_count, init_mode) : worker(N, R, node_count, id);
 
+    MPI_Barrier(MPI_COMM_WORLD);
     MPI_Finalize();
 
     return 0;
@@ -44,7 +45,6 @@ void master(int N, int R, int node_count, char init_mode)
     send_stop(result_requests, node_count);
 
     end = MPI_Wtime();
-
     printf("Execution time: %fs\n", end - start);
 }
 
