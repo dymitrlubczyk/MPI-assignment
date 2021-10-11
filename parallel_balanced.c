@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
 
     id == 0 ? master(N, R, node_count, init_mode) : worker(N, R, node_count, id);
 
-    MPI_Barrier(MPI_COMM_WORLD);
     MPI_Finalize();
 
     return 0;
@@ -46,12 +45,12 @@ void master(int N, int R, int node_count, char init_mode)
     send_stop(result_requests, node_count);
 
     end = MPI_Wtime();
+
     printf("Execution time: %fs\n", end - start);
 }
 
 void worker(int N, int R, int node_count, int id)
 {
-
     int task_size = N / node_count;
     int *task = get_task(task_size);
 
@@ -72,6 +71,7 @@ int get_stop(MPI_Request stop_request)
     return stop;
 }
 
+
 void send_stop(MPI_Request *result_requests, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
@@ -79,7 +79,7 @@ void send_stop(MPI_Request *result_requests, int node_count)
         int stop = 1;
 
         MPI_Request stop_request;
-
+      
         MPI_Isend(&stop, 1, MPI_INT, i, 100, MPI_COMM_WORLD, &stop_request);
     }
 
@@ -129,6 +129,7 @@ int send_tasks(int *A, int N, int node_count)
     {
         MPI_Request task_request;
         MPI_Isend(&A[master_task_size + (i - 1) * task_size], task_size, MPI_INT, i, 0, MPI_COMM_WORLD, &task_request);
+
     }
 
     return master_task_size;
