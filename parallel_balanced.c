@@ -124,7 +124,7 @@ int send_tasks(int *A, int N, int node_count)
     for (int i = 1; i < node_count; ++i)
     {
         MPI_Request task_request;
-        MPI_Isend(&A[master_task_size + (i - 1) * task_size], task_size, MPI_INT, i, 0, MPI_COMM_WORLD, task_request);
+        MPI_Isend(&A[master_task_size + (i - 1) * task_size], task_size, MPI_INT, i, 0, MPI_COMM_WORLD, &task_request);
     }
 
     return master_task_size;
