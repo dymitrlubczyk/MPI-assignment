@@ -89,7 +89,7 @@ void worker(int node_count)
             send_result(test_imbalanced(task[i]));
         }
 
-        send_ready()
+        send_ready();
     }
 }
 
