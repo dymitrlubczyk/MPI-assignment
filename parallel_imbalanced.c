@@ -5,8 +5,6 @@
 #include "test_mpi.h"
 #include "parallel_imbalanced.h"
 
-const N = 500;
-const R = 100;
 const WORK_TAG = 1;
 const STOP_TAG = 2;
 const RESULT_TAG = 3;
