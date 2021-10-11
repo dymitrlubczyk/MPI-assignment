@@ -41,7 +41,7 @@ void master(int N, int R, int node_count, char init_mode)
         counter += get_results(result_requests, node_count);
     }
 
-    send_stop(node_count);
+    send_stop(result_requests, node_count);
 
     end = MPI_Wtime();
 
