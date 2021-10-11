@@ -78,10 +78,12 @@ void worker(int node_count)
 
     while (!stop)
     {
-        stop = get_stop(stop_request);
-        task_ready = get_task(work_request, task);
+        while(!stop || task_ready){
+            stop = get_stop(stop_request);
+            task_ready = get_task(work_request, task);
+        }
 
-        for (int i = 0; i < TASK_SIZE && !stop && task_ready; ++i)
+        for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
             stop = get_stop(stop_request);
             send_result(test_imbalanced(task[i]));
@@ -93,7 +95,7 @@ void worker(int node_count)
 
 void send_ready(){
     int ready = 1;
-    MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD);
 }
 
 void send_result(int result)
