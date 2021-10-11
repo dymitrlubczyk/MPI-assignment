@@ -71,7 +71,6 @@ int get_stop(MPI_Request stop_request)
     return stop;
 }
 
-
 void send_stop(MPI_Request *result_requests, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
