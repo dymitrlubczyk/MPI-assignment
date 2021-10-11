@@ -9,6 +9,7 @@ const N = 500;
 const R = 100;
 const WORK_TAG = 1;
 const STOP_TAG = 2;
+const RESULT_TAG = 3;
 const TASK_SIZE = 10;
 
 int main(int argc, char *argv[])
@@ -36,7 +37,8 @@ void master(int node_count, char init_mode)
     int tasks_count = N / TASK_SIZE;
 
     int *A = initialise(init_mode);
-    int *result_requests = initialise_requests(node_count);
+    MPI_Request *result_requests = initialise_requests(node_count, RESULT_TAG);
+    MPI_Request *work_requests = initialise_requests(node_count, WORK_TAG);
 
     double start = MPI_Wtime();
 
@@ -89,7 +91,7 @@ void worker(int node_count)
 void send_result(int result)
 {
     if (result)
-        MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
 }
 
 int get_results(MPI_Request *result_requests, int node_count)
@@ -104,14 +106,14 @@ int get_results(MPI_Request *result_requests, int node_count)
         if (ready)
         {
             counter += 1;
-            MPI_Irecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &result_requests[i]);
+            MPI_Irecv(&result, 1, MPI_INT, i, RESULT_TAG, MPI_COMM_WORLD, &result_requests[i]);
         }
     }
 
     return counter;
 }
 
-int distribute_work(int *A, int tasks_count, int next_task, int node_count)
+int distribute_work(MPI_Request work_requests,int *A, int tasks_count, int next_task, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
     {
@@ -168,13 +170,13 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, work_request);
 }
 
-MPI_Request *initialise_requests(int node_count)
+MPI_Request *initialise_requests(int node_count, int tag)
 {
     MPI_Request *requests = calloc(node_count, sizeof(MPI_Request));
     int result;
 
     for (int i = 1; i < node_count; ++i)
-        MPI_Irecv(&result, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &requests[i]);
+        MPI_Irecv(&result, 1, MPI_INT, i, tag, MPI_COMM_WORLD, &requests[i]);
 
     return requests;
 }
