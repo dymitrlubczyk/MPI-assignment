@@ -113,7 +113,7 @@ int get_results(MPI_Request *result_requests, int node_count)
     return counter;
 }
 
-int distribute_work(MPI_Request work_requests,int *A, int tasks_count, int next_task, int node_count)
+int distribute_work(MPI_Request* work_requests,int *A, int tasks_count, int next_task, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
     {
@@ -130,6 +130,7 @@ int distribute_work(MPI_Request work_requests,int *A, int tasks_count, int next_
     return next_task;
 }
 
+// TODO: pass MPI_Request, not a pointer
 int get_stop(MPI_Request *stop_request)
 {
     int stop = 0;
@@ -139,6 +140,7 @@ int get_stop(MPI_Request *stop_request)
     return stop;
 }
 
+// TODO: pass MPI_Request, not a pointer
 int get_task(MPI_Request *work_request, int *task)
 {
     int ready = 0;
