@@ -32,6 +32,7 @@ void master(int N, int R, int node_count, char init_mode)
 
     int *A = initialise(N, init_mode);
     int task_size = send_tasks(A, N, node_count);
+
     MPI_Request *result_requests = initialise_requests(node_count);
 
     start = MPI_Wtime();
@@ -50,12 +51,13 @@ void master(int N, int R, int node_count, char init_mode)
 
 void worker(int N, int R, int node_count, int id)
 {
-    int result;
-    MPI_Request stop_request;
-    MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &stop_request);
 
     int task_size = N / node_count;
     int *task = get_task(task_size);
+
+    int result;
+    MPI_Request stop_request;
+    MPI_Irecv(&result, 1, MPI_INT, 0, 100, MPI_COMM_WORLD, &stop_request);
 
     for (int i = 0; i < task_size && !get_stop(stop_request); ++i)
         send_result(test(task[i]));
@@ -78,7 +80,7 @@ void send_stop(MPI_Request *result_requests, int node_count)
 
         MPI_Request stop_request;
 
-        MPI_Isend(&stop, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &stop_request);
+        MPI_Isend(&stop, 1, MPI_INT, i, 100, MPI_COMM_WORLD, &stop_request);
     }
 
     get_results(result_requests, node_count);
