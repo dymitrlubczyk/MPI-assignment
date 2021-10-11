@@ -93,7 +93,7 @@ void worker(int node_count)
 
 void send_ready(){
     int ready = 1;
-    MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE)
+    MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 }
 
 void send_result(int result)
