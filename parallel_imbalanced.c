@@ -78,7 +78,7 @@ void worker(int node_count)
 
     while (!stop)
     {
-        while(!stop || task_ready){
+        while(!stop && !task_ready){
             stop = get_stop(stop_request);
             task_ready = get_task(work_request, task);
         }
