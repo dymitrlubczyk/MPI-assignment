@@ -9,4 +9,4 @@ void send_result(int result);
 int *get_task(int task_size);
 int send_tasks(int *A, int N, int node_count);
 MPI_Request* initialise_requests(int node_count);
-int *initialise(int N);
+int *initialise(int N, char init_mode);
