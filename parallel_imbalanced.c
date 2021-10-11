@@ -5,12 +5,12 @@
 #include "test_mpi.h"
 #include "parallel_imbalanced.h"
 
-const N = 500;
-const R = 100;
-const WORK_TAG = 1;
-const STOP_TAG = 2;
-const RESULT_TAG = 3;
-const TASK_SIZE = 10;
+const int N = 500;
+const int R = 100;
+const int WORK_TAG = 1;
+const int STOP_TAG = 2;
+const int RESULT_TAG = 3;
+const int TASK_SIZE = 10;
 
 int main(int argc, char *argv[])
 {
