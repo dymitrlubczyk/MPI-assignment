@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &node_count);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
-    id == 0 ? master(N, R, node_count) : worker(N, R, node_count, id);
+    id == 0 ? master(N, R, node_count, init_mode) : worker(N, R, node_count, id);
 
     MPI_Finalize();
 
@@ -31,6 +31,7 @@ void master(int N, int R, int node_count, char init_mode)
 
     int *A = initialise(N, init_mode);
     int task_size = send_tasks(A, N, node_count);
+
     MPI_Request *result_requests = initialise_requests(node_count);
 
     start = MPI_Wtime();
@@ -41,7 +42,7 @@ void master(int N, int R, int node_count, char init_mode)
         counter += get_results(result_requests, node_count);
     }
 
-    send_stop(node_count);
+    send_stop(result_requests, node_count);
 
     end = MPI_Wtime();
 
@@ -50,12 +51,12 @@ void master(int N, int R, int node_count, char init_mode)
 
 void worker(int N, int R, int node_count, int id)
 {
-    int result;
-    MPI_Request stop_request;
-    MPI_Irecv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &stop_request);
-
     int task_size = N / node_count;
     int *task = get_task(task_size);
+
+    int result;
+    MPI_Request stop_request;
+    MPI_Irecv(&result, 1, MPI_INT, 0, 100, MPI_COMM_WORLD, &stop_request);
 
     for (int i = 0; i < task_size && !get_stop(stop_request); ++i)
         send_result(test(task[i]));
@@ -70,16 +71,19 @@ int get_stop(MPI_Request stop_request)
     return stop;
 }
 
-void send_stop(int node_count)
+
+void send_stop(MPI_Request *result_requests, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
     {
         int stop = 1;
 
         MPI_Request stop_request;
-
-        MPI_Isend(&stop, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &stop_request);
+      
+        MPI_Isend(&stop, 1, MPI_INT, i, 100, MPI_COMM_WORLD, &stop_request);
     }
+
+    get_results(result_requests, node_count);
 }
 
 int get_results(MPI_Request *result_requests, int node_count)
@@ -124,7 +128,8 @@ int send_tasks(int *A, int N, int node_count)
     for (int i = 1; i < node_count; ++i)
     {
         MPI_Request task_request;
-        MPI_Isend(&A[master_task_size + (i - 1) * task_size], task_size, MPI_INT, i, 0, MPI_COMM_WORLD, task_request);
+        MPI_Isend(&A[master_task_size + (i - 1) * task_size], task_size, MPI_INT, i, 0, MPI_COMM_WORLD, &task_request);
+
     }
 
     return master_task_size;
