@@ -124,7 +124,7 @@ int distribute_work(MPI_Request* work_requests,int *A, int tasks_count, int next
         int finished = 0;
         MPI_Test(&work_requests[i], &finished, MPI_STATUS_IGNORE);
 
-        if (finished)
+        if (finished || next_task == 1)
         {
             next_task += 1;
             next_task < tasks_count ? send_task(i, next_task - 1, A, &work_requests[i]) : send_stop(i);
