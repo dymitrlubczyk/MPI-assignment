@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+
+#include "test_mpi.h"
 #include "parallel_imbalanced.h"
 
 const N = 500;
@@ -15,7 +20,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &node_count);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
-    id == 0 ? master(node_count, init_mode) : worker(node_count, id);
+    id == 0 ? master(node_count, init_mode) : worker(node_count);
 
     MPI_Finalize();
 
@@ -32,14 +37,14 @@ void master(int node_count, char init_mode)
 
     int *A = initialise(init_mode);
     int *result_requests = initialise_requests(node_count);
-    
+
     double start = MPI_Wtime();
-    
+
     while (counter < R && my_task < tasks_count)
     {
         for (int i = 0; i < TASK_SIZE && counter < R; ++i)
         {
-            next_task = distribute_work(tasks_count, next_task);
+            next_task = distribute_work(A, tasks_count, next_task, node_count);
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
             counter += get_results(result_requests, node_count);
         }
@@ -50,7 +55,7 @@ void master(int node_count, char init_mode)
 
     for (int i = 1; i < node_count; ++i)
         send_stop(i);
-    
+
     double end = MPI_Wtime();
 
     printf("Execution time: %fs\n", end - start);
@@ -119,7 +124,8 @@ int distribute_work(int *A, int tasks_count, int next_task, int node_count)
     return next_task;
 }
 
-int get_stop(MPI_Request *stop_request){
+int get_stop(MPI_Request *stop_request)
+{
     int stop = 0;
 
     MPI_Test(&stop_request, &stop, MPI_STATUS_IGNORE);
@@ -169,7 +175,7 @@ MPI_Request *initialise_requests(int node_count)
     return requests;
 }
 
-int *initialise(int N, char init_mode)
+int *initialise(char init_mode)
 {
     int *A = allocate_mem(N);
     init_mode == 'r' ? fill_random(A, N) : fill_ascending(A, N);
