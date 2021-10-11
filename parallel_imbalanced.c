@@ -51,9 +51,9 @@ void master(int node_count, char init_mode)
             counter += get_results(result_requests, node_count);
         }
 
+        printf("Completed tasks: %d/%d\n", next_task, tasks_count);
         my_task = next_task;
         next_task++;
-        printf("Completed tasks: %d/%d", next_task, tasks_count);
     }
 
     for (int i = 1; i < node_count; ++i)
@@ -93,7 +93,7 @@ void send_result(int result)
 {
     if (result){
         MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
-        printf("Result send");
+        printf("Result send\n");
     }
 }
 
@@ -110,7 +110,7 @@ int get_results(MPI_Request *result_requests, int node_count)
         {
             counter += 1;
             MPI_Irecv(&result, 1, MPI_INT, i, RESULT_TAG, MPI_COMM_WORLD, &result_requests[i]);
-            printf("Get result from node#%d", i);
+            printf("Get result from node#%d\n", i);
         }
     }
 
