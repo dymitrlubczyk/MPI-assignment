@@ -67,13 +67,13 @@ void worker(int node_count)
 {
     int task_ready, result;
     int stop = 0;
-    int *task;
+    int *task = calloc(TASK_SIZE, sizeof(int));
     
-    MPI_Request *work_request;
-    MPI_Irecv(task, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, work_request);
+    MPI_Request work_request;
+    MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
-    MPI_Request *stop_request;
-    MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, stop_request);
+    MPI_Request stop_request;
+    MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
     while (!stop)
     {
@@ -130,24 +130,22 @@ int distribute_work(MPI_Request* work_requests,int *A, int tasks_count, int next
     return next_task;
 }
 
-// TODO: pass MPI_Request, not a pointer
-int get_stop(MPI_Request *stop_request)
+int get_stop(MPI_Request stop_request)
 {
     int stop = 0;
 
-    MPI_Test(stop_request, &stop, MPI_STATUS_IGNORE);
+    MPI_Test(&stop_request, &stop, MPI_STATUS_IGNORE);
 
     return stop;
 }
 
-// TODO: pass MPI_Request, not a pointer
-int get_task(MPI_Request *work_request, int *task)
+int get_task(MPI_Request work_request, int *task)
 {
     int ready = 0;
-    MPI_Test(work_request, &ready, MPI_STATUS_IGNORE);
+    MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
     if (ready)
     {
-        MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, work_request);
+        MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
         return 1;
     }
 
