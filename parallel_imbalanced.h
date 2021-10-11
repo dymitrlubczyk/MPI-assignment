@@ -10,4 +10,4 @@ int get_task(MPI_Request *work_request, int *task);
 void send_stop(int node);
 void send_task(int node, int task, int *A, MPI_Request *work_request);
 MPI_Request *initialise_requests(int node_count);
-int *initialise(int N, char init_mode);
+int *initialise(char init_mode);
