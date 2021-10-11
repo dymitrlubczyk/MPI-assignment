@@ -70,7 +70,7 @@ int get_stop(MPI_Request stop_request)
     return stop;
 }
 
-void send_stop(int node_count)
+void send_stop(MPI_Request *result_requests, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
     {
@@ -80,6 +80,8 @@ void send_stop(int node_count)
 
         MPI_Isend(&stop, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &stop_request);
     }
+
+    get_results(result_requests, node_count);
 }
 
 int get_results(MPI_Request *result_requests, int node_count)
