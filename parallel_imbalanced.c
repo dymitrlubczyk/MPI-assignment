@@ -59,7 +59,7 @@ void master(int node_count, char init_mode)
 
     for (int i = 1; i < node_count; ++i)
         send_stop(i);
-    
+
     get_results(result_requests, node_count);
 
     double end = MPI_Wtime();
@@ -72,7 +72,7 @@ void worker(int node_count)
     int task_ready, result;
     int stop = 0;
     //int *task = calloc(TASK_SIZE, sizeof(int));
-    
+
     //MPI_Request work_request;
     //MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
@@ -85,7 +85,8 @@ void worker(int node_count)
         MPI_Request work_request;
         MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
-        while(!stop && !task_ready){
+        while (!stop && !task_ready)
+        {
             stop = get_stop(stop_request);
             task_ready = get_task(work_request, task);
         }
@@ -100,7 +101,8 @@ void worker(int node_count)
     }
 }
 
-void send_ready(){
+void send_ready()
+{
     int ready = 1;
     MPI_Request ready_request;
     MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
@@ -108,7 +110,8 @@ void send_ready(){
 
 void send_result(int result)
 {
-    if (result){
+    if (result)
+    {
         MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
         printf("Result send\n");
     }
@@ -134,7 +137,7 @@ int get_results(MPI_Request *result_requests, int node_count)
     return counter;
 }
 
-int distribute_work(MPI_Request* work_requests,int *A, int tasks_count, int next_task, int node_count)
+int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
     {
@@ -162,8 +165,9 @@ int get_task(MPI_Request work_request, int *task)
 {
     int ready = 0;
     MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
-    
+
     return ready;
+}
 
 void send_stop(int node)
 {
