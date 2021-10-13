@@ -141,6 +141,7 @@ int distribute_work(MPI_Request* work_requests,int *A, int tasks_count, int next
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
 
+    printf("Next task %d\n", next_task);
     return next_task;
 }
 
@@ -179,7 +180,7 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
 
     printf("Task send to %d\n", node);
-    
+
     MPI_Request task_request;
     MPI_Isend(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, &task_request);
 
