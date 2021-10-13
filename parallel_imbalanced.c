@@ -73,8 +73,8 @@ void worker(int node_count)
     int stop = 0;
     //int *task = calloc(TASK_SIZE, sizeof(int));
     
-    MPI_Request work_request;
-    MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
+    //MPI_Request work_request;
+    //MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
     MPI_Request stop_request;
     MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
@@ -82,6 +82,9 @@ void worker(int node_count)
     while (!stop)
     {
         int *task = calloc(TASK_SIZE, sizeof(int));
+        MPI_Request work_request;
+        MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
+
         while(!stop && !task_ready){
             stop = get_stop(stop_request);
             task_ready = get_task(work_request, task);
@@ -159,14 +162,8 @@ int get_task(MPI_Request work_request, int *task)
 {
     int ready = 0;
     MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
-    if (ready)
-    {
-        MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
-        return 1;
-    }
-
-    return 0;
-}
+    
+    return ready;
 
 void send_stop(int node)
 {
