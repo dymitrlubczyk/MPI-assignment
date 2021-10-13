@@ -46,7 +46,6 @@ void master(int node_count, char init_mode)
     {
         for (int i = 0; i < TASK_SIZE && counter < R; ++i)
         {
-            printf("index to be accessed: %d", TASK_SIZE * my_task + i);
             next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
             counter += get_results(result_requests, node_count);
@@ -72,7 +71,7 @@ void worker(int node_count)
 {
     int task_ready, result;
     int stop = 0;
-    int *task = calloc(TASK_SIZE, sizeof(int));
+    //int *task = calloc(TASK_SIZE, sizeof(int));
     
     MPI_Request work_request;
     MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
@@ -82,6 +81,7 @@ void worker(int node_count)
 
     while (!stop)
     {
+        int *task = calloc(TASK_SIZE, sizeof(int));
         while(!stop && !task_ready){
             stop = get_stop(stop_request);
             task_ready = get_task(work_request, task);
