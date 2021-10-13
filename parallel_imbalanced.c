@@ -122,10 +122,11 @@ int get_results(MPI_Request *result_requests, int node_count)
 {
     int result, counter = 0;
 
-    printf("Checking tasks\n");
+    
     for (int i = 1; i < node_count; ++i)
     {
         int ready = 0;
+        printf("Checking request from node %d\n", i);
         MPI_Test(&result_requests[i], &ready, MPI_STATUS_IGNORE);
 
         if (ready)
@@ -136,8 +137,6 @@ int get_results(MPI_Request *result_requests, int node_count)
         }
     }
 
-
-    printf("Tasks checked\n");
     return counter;
 }
 
