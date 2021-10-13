@@ -51,6 +51,7 @@ void master(int node_count, char init_mode)
             counter += get_results(result_requests, node_count);
         }
 
+        printf("Counter %d\n", counter);
         printf("Completed tasks: %d/%d\n", next_task, tasks_count);
         my_task = next_task;
         next_task++;
@@ -95,7 +96,8 @@ void worker(int node_count)
 
 void send_ready(){
     int ready = 1;
-    MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD);
+    MPI_Request ready_request;
+    MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
 }
 
 void send_result(int result)
@@ -130,10 +132,10 @@ int distribute_work(MPI_Request* work_requests,int *A, int tasks_count, int next
 {
     for (int i = 1; i < node_count; ++i)
     {
-        int finished = 0;
-        MPI_Test(&work_requests[i], &finished, MPI_STATUS_IGNORE);
+        int requested = 0;
+        MPI_Test(&work_requests[i], &requested, MPI_STATUS_IGNORE);
 
-        if (finished || next_task <= node_count)
+        if (requested || next_task <= node_count)
         {
             next_task += 1;
             next_task < tasks_count ? send_task(i, next_task - 1, A, &work_requests[i]) : send_stop(i);
