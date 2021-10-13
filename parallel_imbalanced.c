@@ -59,6 +59,8 @@ void master(int node_count, char init_mode)
 
     for (int i = 1; i < node_count; ++i)
         send_stop(i);
+    
+    get_results(result_requests, node_count);
 
     double end = MPI_Wtime();
 
