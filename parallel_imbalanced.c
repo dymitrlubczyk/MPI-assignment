@@ -136,6 +136,8 @@ int get_results(MPI_Request *result_requests, int node_count)
         }
     }
 
+
+    printf("Tasks checked\n");
     return counter;
 }
 
