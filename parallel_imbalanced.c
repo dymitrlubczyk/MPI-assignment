@@ -126,12 +126,13 @@ int get_results(MPI_Request *result_requests, int node_count)
     for (int i = 1; i < node_count; ++i)
     {
         int ready = 0;
-        printf("Checking request from node %d\n", i);
+        
         MPI_Test(&result_requests[i], &ready, MPI_STATUS_IGNORE);
 
         if (ready)
         {
             counter += 1;
+            printf("Receiveing request from node %d\n", i);
             MPI_Irecv(&result, 1, MPI_INT, i, RESULT_TAG, MPI_COMM_WORLD, &result_requests[i]);
             printf("Get result from node#%d\n", i);
         }
