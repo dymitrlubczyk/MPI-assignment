@@ -138,10 +138,7 @@ int distribute_work(MPI_Request* work_requests,int *A, int tasks_count, int next
         MPI_Test(&work_requests[i], &requested, MPI_STATUS_IGNORE);
 
         if (requested || next_task <= node_count)
-        {
-            next_task += 1;
-            next_task < tasks_count ? send_task(i, next_task - 1, A, &work_requests[i]) : send_stop(i);
-        }
+            next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
 
     return next_task;
