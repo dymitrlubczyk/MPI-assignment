@@ -177,6 +177,9 @@ void send_stop(int node)
 
 void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
+
+    printf("Task send to %d\n", node);
+    
     MPI_Request task_request;
     MPI_Isend(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, &task_request);
 
