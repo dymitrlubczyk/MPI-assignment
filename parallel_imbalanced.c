@@ -128,6 +128,7 @@ int get_results(MPI_Request *result_requests, int node_count)
         int ready = 0;
         printf("Checking request from node %d\n", i);
         MPI_Test(&result_requests[i], &ready, MPI_STATUS_IGNORE);
+        printf("Checked for node %d\n", i);
 
         if (ready)
         {
