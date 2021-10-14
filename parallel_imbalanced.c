@@ -125,7 +125,8 @@ int get_results(MPI_Request *result_requests, int node_count)
         int ready = 0;
         MPI_Status status;
         MPI_Test(&result_requests[i], &ready, &status);
-        printf("From rank %d, with tag %d and error code %d.\n",
+        printf("Ready: %d, From rank %d, with tag %d and error code %d.\n",
+               ready,
                status.MPI_SOURCE,
                status.MPI_TAG,
                status.MPI_ERROR);
