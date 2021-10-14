@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
 
     id == 0 ? master(node_count, init_mode) : worker(node_count);
 
+    printf("Node %d is done\n", id);
     MPI_Finalize();
 
     return 0;
