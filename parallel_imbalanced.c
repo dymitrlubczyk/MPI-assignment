@@ -65,7 +65,6 @@ void master(int node_count, char init_mode)
 
     double end = MPI_Wtime();
 
-    get_results(result_requests, node_count);
     printf("Execution time: %fs\n", end - start);
 }
 
@@ -111,7 +110,8 @@ void send_result(int result)
 {
     if (result)
     {
-        MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
+        MPI_Request result_request;
+        MPI_Isend(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD, &result_request);
         printf("Result send\n");
     }
 }
