@@ -178,6 +178,7 @@ int get_task(MPI_Request work_request, int *task)
 
 void send_stop(int node)
 {
+    printf("Sending stop to %d", node);
     int stop = 1;
 
     MPI_Request stop_request;
