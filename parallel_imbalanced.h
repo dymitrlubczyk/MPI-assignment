@@ -2,8 +2,8 @@
 
 void master(int node_count, char init_mode);
 void worker(int node_count);
-void send_ready();
-void send_result(int result);
+void send_ready(int stop);
+void send_result(int stop, int result);
 int get_results(MPI_Request *result_requests, int node_count);
 int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count);
 int get_stop(MPI_Request stop_request);

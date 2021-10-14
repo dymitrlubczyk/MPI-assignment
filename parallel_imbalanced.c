@@ -92,23 +92,26 @@ void worker(int node_count)
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
             stop = get_stop(stop_request);
-            send_result(test_imbalanced(task[i]));
+            send_result(stop, test_imbalanced(task[i]));
         }
 
-        send_ready();
+        send_ready(stop);
     }
 }
 
-void send_ready()
+void send_ready(int stop)
 {
-    int ready = 1;
-    MPI_Request ready_request;
-    MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
+    if (!stop)
+    {
+        int ready = 1;
+        MPI_Request ready_request;
+        MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
+    }
 }
 
-void send_result(int result)
+void send_result(int stop, int result)
 {
-    if (result)
+    if (!stop && result)
     {
         MPI_Request result_request;
         MPI_Isend(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD, &result_request);
