@@ -68,7 +68,9 @@ void master(int node_count, char init_mode)
 
 void worker(int node_count)
 {
-    int task_ready, result;
+    int result;
+    printf("Result: %d", result);
+    int task_ready = 0;
     int stop = 0;
     int *task = calloc(TASK_SIZE, sizeof(int));
 
