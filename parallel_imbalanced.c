@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     id == 0 ? master(node_count, init_mode) : worker(node_count);
 
     printf("Node %d is done\n", id);
+    MPI_Barrier(MPI_COMM_WORLD);
     MPI_Finalize();
 
     return 0;
@@ -65,7 +66,6 @@ void master(int node_count, char init_mode)
     double end = MPI_Wtime();
 
     get_results(result_requests, node_count);
-    MPI_Barrier(MPI_COMM_WORLD);
     printf("Execution time: %fs\n", end - start);
 }
 
