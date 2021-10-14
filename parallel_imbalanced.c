@@ -51,9 +51,7 @@ void master(int node_count, char init_mode)
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
             counter += get_results(result_requests, node_count);
         }
-
-        printf("Counter %d\n", counter);
-        printf("Completed tasks: %d/%d\n", next_task, tasks_count);
+        
         my_task = next_task;
         next_task++;
     }
@@ -112,11 +110,7 @@ void send_ready(int stop)
 void send_result(int stop, int result)
 {
     if (!stop && result)
-    {
-        //MPI_Request result_request;
         MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
-        printf("Result send\n");
-    }
 }
 
 int get_results(MPI_Request *result_requests, int node_count)
@@ -128,18 +122,11 @@ int get_results(MPI_Request *result_requests, int node_count)
         int ready = 0;
         MPI_Status status;
         MPI_Test(&result_requests[i], &ready, &status);
-        printf("Ready: %d, From rank %d, with tag %d and error code %d.\n",
-               ready,
-               status.MPI_SOURCE,
-               status.MPI_TAG,
-               status.MPI_ERROR);
 
         if (ready)
         {
             counter += 1;
-            printf("Receiveing request from node %d\n", i);
             MPI_Irecv(&result, 1, MPI_INT, i, RESULT_TAG, MPI_COMM_WORLD, &result_requests[i]);
-            printf("Get result from node#%d\n", i);
         }
     }
 
@@ -157,7 +144,6 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
 
-    printf("Next task %d\n", next_task);
     return next_task;
 }
 
@@ -173,6 +159,7 @@ int get_stop(MPI_Request stop_request)
 int get_task(MPI_Request work_request, int *task)
 {
     int ready = 0;
+
     MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
 
     return ready;
@@ -180,7 +167,6 @@ int get_task(MPI_Request work_request, int *task)
 
 void send_stop(int node)
 {
-    printf("Sending stop to %d\n", node);
     int stop = 1;
 
     MPI_Request stop_request;
@@ -190,9 +176,6 @@ void send_stop(int node)
 
 void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
-
-    printf("Task %d send to %d\n", task, node);
-
     MPI_Request task_request;
     MPI_Isend(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, &task_request);
 
