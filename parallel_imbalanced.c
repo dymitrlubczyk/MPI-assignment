@@ -69,7 +69,6 @@ void master(int node_count, char init_mode)
 void worker(int node_count)
 {
     int result;
-    printf("Result: %d", result);
     int task_ready = 0;
     int stop = 0;
     int *task = calloc(TASK_SIZE, sizeof(int));
@@ -114,8 +113,8 @@ void send_result(int stop, int result)
 {
     if (!stop && result)
     {
-        MPI_Request result_request;
-        MPI_Isend(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD, &result_request);
+        //MPI_Request result_request;
+        MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
         printf("Result send\n");
     }
 }
@@ -134,8 +133,6 @@ int get_results(MPI_Request *result_requests, int node_count)
                status.MPI_SOURCE,
                status.MPI_TAG,
                status.MPI_ERROR);
-
-        printf("Checked for node %d\n", i);
 
         if (ready)
         {
