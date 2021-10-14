@@ -24,7 +24,6 @@ int main(int argc, char *argv[])
     id == 0 ? master(node_count, init_mode) : worker(node_count);
 
     printf("Node %d is done\n", id);
-    MPI_Barrier(MPI_COMM_WORLD);
     MPI_Finalize();
 
     return 0;
@@ -49,7 +48,6 @@ void master(int node_count, char init_mode)
         for (int i = 0; i < TASK_SIZE && counter < R; ++i)
         {
             next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
-            printf("Number to check: %d\n", A[TASK_SIZE * my_task + i]);
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
             counter += get_results(result_requests, node_count);
         }
@@ -91,8 +89,9 @@ void worker(int node_count)
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
+            int result = test_imbalanced(task[i]);
             stop = get_stop(stop_request);
-            send_result(stop, test_imbalanced(task[i]));
+            send_result(stop, result);
         }
 
         send_ready(stop);
@@ -155,7 +154,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         int requested = 0;
         MPI_Test(&work_requests[i], &requested, MPI_STATUS_IGNORE);
 
-        if (requested || next_task <= node_count)
+        if (requested || next_task < node_count)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
 
