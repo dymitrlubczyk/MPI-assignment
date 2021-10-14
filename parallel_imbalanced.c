@@ -64,6 +64,8 @@ void master(int node_count, char init_mode)
 
     double end = MPI_Wtime();
 
+    get_results(result_requests, node_count);
+    MPI_Barrier(MPI_COMM_WORLD);
     printf("Execution time: %fs\n", end - start);
 }
 
