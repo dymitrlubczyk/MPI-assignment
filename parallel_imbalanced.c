@@ -61,7 +61,6 @@ void master(int node_count, char init_mode)
     for (int i = 1; i < node_count; ++i)
         send_stop(i);
 
-    get_results(result_requests, node_count);
 
     double end = MPI_Wtime();
 
@@ -72,19 +71,16 @@ void worker(int node_count)
 {
     int task_ready, result;
     int stop = 0;
-    //int *task = calloc(TASK_SIZE, sizeof(int));
+    int *task = calloc(TASK_SIZE, sizeof(int));
 
-    //MPI_Request work_request;
-    //MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
+    MPI_Request work_request;
+    MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
     MPI_Request stop_request;
     MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
     while (!stop)
     {
-        int *task = calloc(TASK_SIZE, sizeof(int));
-        MPI_Request work_request;
-        MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
         while (!stop && !task_ready)
         {
@@ -126,8 +122,13 @@ int get_results(MPI_Request *result_requests, int node_count)
     for (int i = 1; i < node_count; ++i)
     {
         int ready = 0;
-        printf("Checking request from node %d\n", i);
-        MPI_Test(&result_requests[i], &ready, MPI_STATUS_IGNORE);
+        MPI_Status status;
+        MPI_Test(&result_requests[i], &ready, &status);
+         printf("From rank %d, with tag %d and error code %d.\n", 
+               status.MPI_SOURCE,
+               status.MPI_TAG,
+               status.MPI_ERROR);
+
         printf("Checked for node %d\n", i);
 
         if (ready)
