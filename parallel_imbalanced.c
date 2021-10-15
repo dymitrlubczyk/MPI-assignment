@@ -85,7 +85,6 @@ void worker(int node_count, int id)
         }
         
         free(task);
-        stop = get_stop(stop, stop_request);
     }
 }
 
