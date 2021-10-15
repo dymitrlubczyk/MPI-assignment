@@ -77,6 +77,7 @@ void worker(int node_count)
     MPI_Request stop_request;
     MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
+    int sum;
     while (!stop)
     {
 
@@ -85,6 +86,12 @@ void worker(int node_count)
             stop = get_stop(stop_request);
             task_ready = get_task(work_request, task);
         }
+
+        sum = 0;
+        for(int i=0; i<TASK_SIZE; ++i)
+            sum += task[i];
+        
+        printf("Task sum %d\n", sum);
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
