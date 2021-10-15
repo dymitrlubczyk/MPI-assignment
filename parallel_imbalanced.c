@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &node_count);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
-    id == 0 ? master(node_count, init_mode) : worker(node_count);
+    id == 0 ? master(node_count, init_mode) : worker(node_count, id);
 
     printf("Node %d is done\n", id);
     MPI_Finalize();
@@ -51,7 +51,7 @@ void master(int node_count, char init_mode)
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
             counter += get_results(result_requests, node_count);
         }
-        
+
         my_task = next_task;
         next_task++;
     }
@@ -64,10 +64,9 @@ void master(int node_count, char init_mode)
     printf("Execution time: %fs\n", end - start);
 }
 
-void worker(int node_count)
+void worker(int node_count, int id)
 {
-    int result;
-    int task_ready = 0;
+    int result, task_ready;
     int stop = 0;
     int *task = calloc(TASK_SIZE, sizeof(int));
 
@@ -77,8 +76,11 @@ void worker(int node_count)
     MPI_Request stop_request;
     MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
+    int sum;
     while (!stop)
     {
+        send_ready(stop);
+        task_ready = 0;
 
         while (!stop && !task_ready)
         {
@@ -92,8 +94,6 @@ void worker(int node_count)
             stop = get_stop(stop_request);
             send_result(stop, result);
         }
-
-        send_ready(stop);
     }
 }
 
@@ -138,9 +138,10 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
     for (int i = 1; i < node_count; ++i)
     {
         int requested = 0;
+
         MPI_Test(&work_requests[i], &requested, MPI_STATUS_IGNORE);
 
-        if (requested || next_task < node_count)
+        if (requested)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
 
@@ -161,6 +162,9 @@ int get_task(MPI_Request work_request, int *task)
     int ready = 0;
 
     MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
+
+    if (ready)
+        MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
     return ready;
 }
