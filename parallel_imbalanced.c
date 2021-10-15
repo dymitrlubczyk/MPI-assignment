@@ -79,8 +79,8 @@ void worker(int node_count, int id)
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
-            int result = test_imbalanced(task[i]);
             stop = get_stop(stop, stop_request);
+            int result = test_imbalanced(task[i]);
             send_result(stop, result);
         }
         
