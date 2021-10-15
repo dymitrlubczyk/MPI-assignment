@@ -54,6 +54,8 @@ void master(int node_count, char init_mode)
 
         my_task = next_task;
         next_task++;
+
+        printf("Counter: %d, done %d/%d\n", counter, next_task, tasks_count);
     }
 
     finish(result_requests, work_requests, A, tasks_count, next_task, node_count);
