@@ -191,7 +191,7 @@ void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, in
     free(work_requests);
 
     for (int i = 1; i < node_count; ++i)
-        MPI_Wait(&stop_request[i],MPI_STATUS_IGNORE);
+        MPI_Wait(&stop_requests[i],MPI_STATUS_IGNORE);
     
     free(stop_requests);
 }
