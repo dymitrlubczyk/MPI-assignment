@@ -184,6 +184,8 @@ void send_stop(int node)
 void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
     int result;
+    printf("Received task request from %d\n", node);
+
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, work_request);
 
     printf("Sending task %d to %d\n", task, node);
