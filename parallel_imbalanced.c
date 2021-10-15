@@ -56,7 +56,7 @@ void master(int node_count, char init_mode)
         next_task++;
     }
 
-    finish(result_requests, work_requests, A, tasks_count, next_task, node_count)
+    finish(result_requests, work_requests, A, tasks_count, next_task, node_count);
     double end = MPI_Wtime();
 
     printf("Execution time: %fs\n", end - start);
