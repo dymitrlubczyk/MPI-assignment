@@ -159,7 +159,7 @@ int *get_task()
     int ready = 1;
     MPI_Request ready_request;
     MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
-
+    printf("Sent ready!\n");
     int *task = allocate_mem(TASK_SIZE);
 
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
