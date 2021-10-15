@@ -139,7 +139,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
     {
         int requested = 0;
         MPI_Test(&work_requests[i], &requested, MPI_STATUS_IGNORE);
-
+        printf("Master side: node %d requested %d", i, requested);
         if (requested || next_task < node_count)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
