@@ -127,7 +127,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         MPI_Status status;
 
         MPI_Test(&work_requests[i], &requested, &status);
-        printf("Passed: %d, Source: %d, Tag: %d\n", requested, restatus.MPI_SOURCE, status.MPI_TAG);
+        printf("Passed: %d, Source: %d, Tag: %d\n", requested, status.MPI_SOURCE, status.MPI_TAG);
 
         if (requested)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
