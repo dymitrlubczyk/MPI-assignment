@@ -182,7 +182,7 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, work_request);
 }
 
-void finish()
+//void finish()
 MPI_Request *initialise_requests(int node_count, int tag)
 {
     MPI_Request *requests = calloc(node_count, sizeof(MPI_Request));
