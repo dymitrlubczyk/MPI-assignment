@@ -43,7 +43,8 @@ void master(int N, int R, int node_count, char init_mode)
     }
 
     send_stop(result_requests, node_count);
-
+    free(result_requests);
+    free(A);
     end = MPI_Wtime();
 
     printf("Execution time: %fs\n", end - start);
@@ -51,17 +52,16 @@ void master(int N, int R, int node_count, char init_mode)
 
 void worker(int N, int R, int node_count, int id)
 {
-    int result;
     int stop = 0;
     int task_size = N / node_count;
     int *task = get_task(task_size);
 
-    int result;
+    int stop_result;
     MPI_Request stop_request;
-    MPI_Irecv(&result, 1, MPI_INT, 0, 100, MPI_COMM_WORLD, &stop_request);
+    MPI_Irecv(&stop_result, 1, MPI_INT, 0, 100, MPI_COMM_WORLD, &stop_request);
 
     for (int i = 0; i < task_size && !stop; ++i)
-        result = test(task[i]);
+        int result = test(task[i]);
         stop = get_stop(stop_request);
         send_result(stop, result);
 }
