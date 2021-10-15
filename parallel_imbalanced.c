@@ -163,6 +163,7 @@ int *get_task()
     printf("Sent ready!\n");
 
     int *task = allocate_mem(TASK_SIZE);
+    printf("Mem allocated\n");
 
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
