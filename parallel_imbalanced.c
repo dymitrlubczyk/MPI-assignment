@@ -184,6 +184,7 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
     //MPI_Request task_request;
     printf("Sending task %d to %d\n", task, node);
+    printf("Address to access %d\n", task * TASK_SIZE);
     MPI_Send(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD);
     printf("Done\n");
     int result;
