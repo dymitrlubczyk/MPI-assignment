@@ -183,7 +183,7 @@ void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, in
 
 
     for (int i = 1; i < node_count; ++i)
-        MPI_Isend(&stop, 1, MPI_INT, node, STOP_TAG, MPI_COMM_WORLD, &stop_request);
+        MPI_Isend(&stop, 1, MPI_INT, node, STOP_TAG, MPI_COMM_WORLD, &stop_requests[i]);
 
     get_results(result_requests, node_count);
     distribute_work(work_requests, A, tasks_count, next_task, node_count);
