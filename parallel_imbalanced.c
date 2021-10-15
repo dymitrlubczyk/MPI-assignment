@@ -79,7 +79,7 @@ void worker(int node_count, int id)
     while (!stop)
     {
      //   send_ready(stop);
-        get_task(work_request, task);
+        task = get_task(work_request, task);
 
     //    while (!stop && !task_ready)
     //    {
