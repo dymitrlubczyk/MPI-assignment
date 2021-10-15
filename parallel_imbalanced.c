@@ -80,19 +80,19 @@ void worker(int node_count, int id)
 
     while (!stop)
     {
-     //   send_ready(stop);
+        //   send_ready(stop);
         task = get_task();
 
-    //    while (!stop && !task_ready)
-    //    {
-    //        stop = get_stop(stop_request);
-    //        task_ready = get_task(work_request, task);
-    //    }
+        //    while (!stop && !task_ready)
+        //    {
+        //        stop = get_stop(stop_request);
+        //        task_ready = get_task(work_request, task);
+        //    }
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
+            printf("Node %d is testing %d", id, task[i]);
             int result = test_imbalanced(task[i]);
-            printf("Number %d tested", task[i]);
             stop = get_stop(stop_request);
             send_result(stop, result);
         }
@@ -158,11 +158,12 @@ int get_stop(MPI_Request stop_request)
     int stop = 0;
 
     MPI_Test(&stop_request, &stop, MPI_STATUS_IGNORE);
-    if(stop) printf("Got stop\n");
+    if (stop)
+        printf("Got stop\n");
     return stop;
 }
 
-int* get_task()
+int *get_task()
 {
     int ready = 1;
     MPI_Request ready_request;
@@ -173,7 +174,6 @@ int* get_task()
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     printf("Task received, first in buffer %d\n", task[0]);
-
 
     return task;
 }
