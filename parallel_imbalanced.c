@@ -179,7 +179,7 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
 
 void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count){
     int stop = 1;
-    MPI_Request stop_requests = initialise_requests(node_count, STOP_TAG);
+    MPI_Request* stop_requests = initialise_requests(node_count, STOP_TAG);
 
 
     for (int i = 1; i < node_count; ++i)
