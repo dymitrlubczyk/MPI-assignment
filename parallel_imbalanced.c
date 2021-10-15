@@ -48,8 +48,8 @@ void master(int node_count, char init_mode)
         for (int i = 0; i < TASK_SIZE && counter < R; ++i)
         {
             next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
-            counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
             counter += get_results(result_requests, node_count);
+            counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
         }
 
         my_task = next_task;
@@ -79,13 +79,13 @@ void worker(int node_count, int id)
     while (!stop)
     {
         send_ready(stop);
-        task_ready = 0;
+        get_task(work_request, task);
 
-        while (!stop && !task_ready)
-        {
-            stop = get_stop(stop_request);
-            task_ready = get_task(work_request, task);
-        }
+       // while (!stop && !task_ready)
+       // {
+       //     stop = get_stop(stop_request);
+       //     task_ready = get_task(work_request, task);
+       // }
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
@@ -161,13 +161,13 @@ int get_task(MPI_Request work_request, int *task)
 {
     int ready = 0;
 
-    MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
+   // MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
 
-    if (ready){
-        printf("Got task\n");
-        MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
-    }
-
+   // if (ready){
+   //     printf("Got task\n");
+   //   MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
+   // }
+    MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD);
     return ready;
 }
 
@@ -182,10 +182,9 @@ void send_stop(int node)
 
 void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
-    //MPI_Request task_request;
+    MPI_Request task_request;
     printf("Sending task %d to %d\n", task, node);
-    printf("Address to access %d\n", task * TASK_SIZE);
-    MPI_Send(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD);
+    MPI_Isend(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, &task_request);
     printf("Done\n");
     int result;
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, work_request);
