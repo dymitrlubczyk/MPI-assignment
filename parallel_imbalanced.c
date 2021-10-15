@@ -49,6 +49,7 @@ void master(int node_count, char init_mode)
         {
             next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
             counter += get_results(result_requests, node_count);
+            printf("Master is testing %d\n", A[TASK_SIZE * my_task + i]);
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
         }
 
