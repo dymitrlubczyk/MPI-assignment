@@ -43,15 +43,13 @@ void master(int node_count, char init_mode)
 
     double start = MPI_Wtime();
     
-    next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
-
     while (counter < R && my_task < tasks_count)
     {
         for (int i = 0; i < TASK_SIZE && counter < R; ++i)
         {
+            next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
             counter += get_results(result_requests, node_count);
-            next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
         }
 
         my_task = next_task;
