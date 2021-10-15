@@ -49,7 +49,6 @@ void master(int node_count, char init_mode)
         {
             next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
             counter += get_results(result_requests, node_count);
-            printf("Master is testing %d\n", A[TASK_SIZE * my_task + i]);
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
         }
 
@@ -80,7 +79,6 @@ void worker(int node_count, int id)
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
-            printf("Node %d is testing %d\n", id, task[i]);
             int result = test_imbalanced(task[i]);
             stop = get_stop(stop_request);
             send_result(stop, result);
@@ -92,8 +90,8 @@ void send_result(int stop, int result)
 {
     if (!stop && result)
     {
-        printf("Sending result\n");
         MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
+        printf("Result sent\n");
     }
 }
 
