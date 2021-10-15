@@ -88,10 +88,10 @@ void worker(int node_count, int id)
         }
 
         sum = 0;
-        for(int i=0; i<TASK_SIZE; ++i)
+        for (int i = 0; i < TASK_SIZE; ++i)
             sum += task[i];
-        
-        printf("Node %d Task sum %d\n",id ,sum);
+
+        printf("Node %d Task sum %d\n", id, sum);
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
@@ -166,13 +166,19 @@ int get_stop(MPI_Request stop_request)
 int get_task(MPI_Request work_request, int *task)
 {
     int ready = 0;
+    MPI_Status status;
 
-    MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
-    if(ready){
+    MPI_Test(&work_request, &ready, &status);
+    printf("From rank %d, with tag %d and error code %d.\n", 
+               status.MPI_SOURCE,
+               status.MPI_TAG,
+               status.MPI_ERROR);
+    if (ready)
+    {
         printf("Got task\n");
         MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
-    } 
-        
+    }
+
     return ready;
 }
 
