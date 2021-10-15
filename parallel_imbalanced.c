@@ -55,7 +55,6 @@ void master(int node_count, char init_mode)
 
         my_task = next_task;
         next_task++;
-        printf("Next task %d\n", next_task);
     }
 
     for (int i = 1; i < node_count; ++i)
@@ -78,7 +77,7 @@ void worker(int node_count, int id)
     while (!stop)
     {
         task = get_task();
-        printf("Task[0]: %d stop: %d\n", task[0], stop);
+
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
             printf("Node %d is testing %d\n", id, task[i]);
@@ -135,7 +134,6 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         int requested = 0;
 
         MPI_Test(&work_requests[i], &requested, MPI_STATUS_IGNORE);
-        printf("Checked worked request from node %d\n", i);
 
         if (requested)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
@@ -156,14 +154,10 @@ int get_stop(MPI_Request stop_request)
 
 int *get_task()
 {
-    printf("Receiving\n");
     int ready = 1;
-    //MPI_Request work_request;
     MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD); //&work_request);
-    printf("Sent ready!\n");
 
     int *task = allocate_mem(TASK_SIZE);
-    printf("Mem allocated\n");
 
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
@@ -184,13 +178,10 @@ void send_stop(int node)
 void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
     int result;
-    printf("Received task request from %d\n", node);
-
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, work_request);
 
     printf("Sending task %d to %d\n", task, node);
     MPI_Send(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD);
-    printf("Done\n");
 }
 
 MPI_Request *initialise_requests(int node_count, int tag)
