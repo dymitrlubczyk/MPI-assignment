@@ -58,14 +58,9 @@ void master(int node_count, char init_mode)
 
     for (int i = 1; i < node_count; ++i)
         send_stop(i);
-
-    for (int i = 1; i < node_count; ++i){
-        int ready = 0;
-        MPI_Status status;
-        MPI_Test(&result_requests[i], &ready, &status);
-        printf("Ready: %d, Source: %d, Tag: %d\n", ready, status.MPI_SOURCE, status.MPI_TAG);
-    }
-
+    
+    distribute_work(work_requests, A, tasks_count, next_task, node_count);distribute_work(work_requests, A, tasks_count, next_task, node_count);
+    get_results(result_requests, node_count);
     
     double end = MPI_Wtime();
 
@@ -114,7 +109,7 @@ int get_results(MPI_Request *result_requests, int node_count)
         MPI_Status status;
 
         MPI_Test(&result_requests[i], &ready, &status);
-        printf("Ready: %d, Source: %d, Tag: %d\n", ready, status.MPI_SOURCE, status.MPI_TAG);
+        printf("Result ready: %d, Source: %d, Tag: %d\n", ready, status.MPI_SOURCE, status.MPI_TAG);
 
         if (ready)
         {
@@ -134,7 +129,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         MPI_Status status;
 
         MPI_Test(&work_requests[i], &requested, &status);
-        printf("Passed: %d, Source: %d, Tag: %d\n", requested, status.MPI_SOURCE, status.MPI_TAG);
+        printf("Asking for work: %d, Source: %d, Tag: %d\n", requested, status.MPI_SOURCE, status.MPI_TAG);
 
         if (requested)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
