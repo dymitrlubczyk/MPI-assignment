@@ -56,12 +56,7 @@ void master(int node_count, char init_mode)
         next_task++;
     }
 
-    for (int i = 1; i < node_count; ++i)
-        send_stop(i);
-    
-    get_results(result_requests, node_count);
-    distribute_work(work_requests, A, tasks_count, next_task, node_count);
-    
+    finish(result_requests, work_requests, A, tasks_count, next_task, node_count)
     double end = MPI_Wtime();
 
     printf("Execution time: %fs\n", end - start);
@@ -182,7 +177,16 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, work_request);
 }
 
-//void finish()
+void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count){
+    
+    get_results(result_requests, node_count);
+    distribute_work(work_requests, A, tasks_count, next_task, node_count);
+    
+    for (int i = 1; i < node_count; ++i)
+        send_stop(i);
+    
+}
+
 MPI_Request *initialise_requests(int node_count, int tag)
 {
     MPI_Request *requests = calloc(node_count, sizeof(MPI_Request));
