@@ -59,6 +59,8 @@ void master(int node_count, char init_mode)
     for (int i = 1; i < node_count; ++i)
         send_stop(i);
 
+    printf("Unlocking\n");
+    get_results(result_requests, node_count);
     double end = MPI_Wtime();
 
     printf("Execution time: %fs\n", end - start);
