@@ -167,7 +167,8 @@ int get_task(MPI_Request work_request, int *task)
    //     printf("Got task\n");
    //   MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
    // }
-    MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD);
+    MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    printf("Got task\n");
     return ready;
 }
 
