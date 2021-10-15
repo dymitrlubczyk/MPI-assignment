@@ -68,7 +68,7 @@ void worker(int node_count, int id)
 {
     int result, task_ready;
     int stop = 0;
-    int *task = calloc(TASK_SIZE, sizeof(int));
+    int *task;
 
     MPI_Request work_request;
    // MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
@@ -157,15 +157,17 @@ int get_stop(MPI_Request stop_request)
     return stop;
 }
 
-int get_task(MPI_Request work_request, int *task)
+int* get_task()
 {
     int ready = 1;
     MPI_Request ready_request;
     MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
 
+    int *task = allocate_mem(TASK_SIZE);
+
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-    return 5;
+    return task;
 }
 
 void send_stop(int node)
