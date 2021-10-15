@@ -5,7 +5,7 @@ all: ${EXECS}
 
 
 test_mpi:test_mpi.c
-	${MPICC} -Wall -O3 -o test_mpi test_mpi.c -lm
+	${MPICC} -Wall -O3 -o test_mpi test_mpi.c -lm -std=c99 
 
 # parallel_imbalanced:parallel_imbalanced.c test_mpi.c
 # 	${MPICC} -O2 -o parallel_imbalanced test_mpi.c parallel_imbalanced.c -lm -std=c99 
