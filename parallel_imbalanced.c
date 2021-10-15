@@ -88,10 +88,10 @@ void worker(int node_count, int id)
     }
 }
 
-
 void send_result(int stop, int result)
 {
-    if (!stop && result){
+    if (!stop && result)
+    {
         printf("Sending result\n");
         MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
     }
@@ -124,10 +124,10 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
     for (int i = 1; i < node_count; ++i)
     {
         int requested = 0;
-        MPI_Status status; 
+        MPI_Status status;
 
         MPI_Test(&work_requests[i], &requested, &status);
-        printf("Source: %d, Tag: %d\n",status.MPI_SOURCE, status.MPI_TAG);
+        printf("Passed: %d, Source: %d, Tag: %d\n", requested, restatus.MPI_SOURCE, status.MPI_TAG);
 
         if (requested)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
@@ -168,12 +168,12 @@ void send_stop(int node)
     MPI_Isend(&stop, 1, MPI_INT, node, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 }
 
-void send_task(int node, int task, int *A, MPI_Request* work_request)
+void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
     printf("Sending task %d to %d\n", task, node);
     MPI_Send(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD);
 
-    int* result = calloc(1, sizeof(int));
+    int *result = calloc(1, sizeof(int));
     MPI_Request *request = calloc(1, sizeof(MPI_Request));
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, request);
     work_request = request;
@@ -182,7 +182,7 @@ void send_task(int node, int task, int *A, MPI_Request* work_request)
 MPI_Request *initialise_requests(int node_count, int tag)
 {
     MPI_Request *requests = calloc(node_count, sizeof(MPI_Request));
-    int* results = calloc(node_count, sizeof(int));
+    int *results = calloc(node_count, sizeof(int));
 
     for (int i = 1; i < node_count; ++i)
         MPI_Irecv(&results[i], 1, MPI_INT, i, tag, MPI_COMM_WORLD, &requests[i]);
