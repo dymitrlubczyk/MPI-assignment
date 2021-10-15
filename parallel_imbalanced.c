@@ -51,7 +51,7 @@ void master(int node_count, char init_mode)
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
             counter += get_results(result_requests, node_count);
         }
-        
+
         my_task = next_task;
         next_task++;
     }
@@ -102,8 +102,7 @@ void send_ready(int stop)
     if (!stop)
     {
         int ready = 1;
-        MPI_Request ready_request;
-        MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
+        MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD);
     }
 }
 
@@ -161,7 +160,7 @@ int get_task(MPI_Request work_request, int *task)
     int ready = 0;
 
     MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
-
+    if(ready) printf("Got task");
     return ready;
 }
 
