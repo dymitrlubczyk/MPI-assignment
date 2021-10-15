@@ -65,6 +65,8 @@ void worker(int N, int R, int node_count, int id)
         stop = get_stop(stop_request);
         send_result(stop, result);
     }
+
+    free(task);
 }
 
 int get_stop(MPI_Request stop_request)
