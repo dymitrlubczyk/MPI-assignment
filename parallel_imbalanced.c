@@ -157,13 +157,15 @@ int get_stop(MPI_Request stop_request)
     return stop;
 }
 
-void get_task(MPI_Request work_request, int *task)
+int get_task(MPI_Request work_request, int *task)
 {
     int ready = 1;
     MPI_Request ready_request;
     MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
 
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+    return 5;
 }
 
 void send_stop(int node)
