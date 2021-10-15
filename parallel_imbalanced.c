@@ -76,7 +76,8 @@ void worker(int node_count, int id)
     while (!stop)
     {
         task = get_task();
-
+        stop = get_stop(stop_request);
+        
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
             int result = test_imbalanced(task[i]);
@@ -185,10 +186,6 @@ void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, in
         send_stop(i);
 
     get_results(result_requests, node_count);
-    printf("Got results from everybody\n");
-    for (int i = 1; i < node_count; ++i)
-        printf("%d. work request %d\n", i, work_requests[i]);
-
     distribute_work(work_requests, A, tasks_count, next_task, node_count);
 
     
