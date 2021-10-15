@@ -68,26 +68,16 @@ void master(int node_count, char init_mode)
 
 void worker(int node_count, int id)
 {
-    int result, task_ready;
+    int stop_result;
     int stop = 0;
     int *task;
 
-    MPI_Request work_request;
-    //MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
-
     MPI_Request stop_request;
-    MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
+    MPI_Irecv(&stop_result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
     while (!stop)
     {
-        //   send_ready(stop);
         task = get_task();
-
-        //    while (!stop && !task_ready)
-        //    {
-        //        stop = get_stop(stop_request);
-        //        task_ready = get_task(work_request, task);
-        //    }
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
