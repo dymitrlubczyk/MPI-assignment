@@ -54,6 +54,7 @@ void master(int node_count, char init_mode)
 
         my_task = next_task;
         next_task++;
+        printf("Master side: %d next task", next_task);
     }
 
     for (int i = 1; i < node_count; ++i)
@@ -66,8 +67,7 @@ void master(int node_count, char init_mode)
 
 void worker(int node_count, int id)
 {
-    int result;
-    int task_ready = 0;
+    int result, task_ready;
     int stop = 0;
     int *task = calloc(TASK_SIZE, sizeof(int));
 
@@ -80,7 +80,7 @@ void worker(int node_count, int id)
     int sum;
     while (!stop)
     {
-
+        task_ready = 0;
         while (!stop && !task_ready)
         {
             stop = get_stop(stop_request);
