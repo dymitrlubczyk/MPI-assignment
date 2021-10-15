@@ -71,10 +71,10 @@ void worker(int node_count, int id)
     int *task;
 
     MPI_Request work_request;
-   // MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
+    //MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
     MPI_Request stop_request;
-   // MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
+    MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
     while (!stop)
     {
@@ -167,6 +167,8 @@ int* get_task()
 
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
+
+
     return task;
 }
 
@@ -183,7 +185,7 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
 {
     int result;
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, work_request);
-    
+
     printf("Sending task %d to %d\n", task, node);
     MPI_Send(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD);
     printf("Done\n");
