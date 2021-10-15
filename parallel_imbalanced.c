@@ -182,6 +182,10 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
 void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count){
     
     get_results(result_requests, node_count);
+    printf("Got results from everybody\n");
+    for (int i = 1; i < node_count; ++i)
+        printf("%d. work request %d", i, work_requests[i]);
+
     distribute_work(work_requests, A, tasks_count, next_task, node_count);
     
     for (int i = 1; i < node_count; ++i)
