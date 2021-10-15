@@ -81,6 +81,7 @@ void worker(int node_count, int id)
         printf("Task[0]: %d stop: %d\n", task[0], stop);
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
+            printf("Hello!\n");
             printf("Node %d is testing %d", id, task[i]);
             int result = test_imbalanced(task[i]);
             stop = get_stop(stop_request);
@@ -115,7 +116,7 @@ int get_results(MPI_Request *result_requests, int node_count)
     {
         int ready = 0;
         MPI_Status status;
-        printf("Gettin result for %d\n", i);
+
         MPI_Test(&result_requests[i], &ready, &status);
 
         if (ready)
