@@ -4,10 +4,10 @@ MPICC?=mpicc
 all: ${EXECS}
 
 
-parallel-imbalanced:parallel_imbalanced.c test_mpi.c
+parallel_imbalanced:parallel_imbalanced.c test_mpi.c
 	${MPICC} -O2 -o parallel_imbalanced test_mpi.c parallel_imbalanced.c -lm -std=c99 
 
-parallel-balanced:parallel_balanced.c test_mpi.c
+parallel_balanced:parallel_balanced.c test_mpi.c
 	${MPICC} -O2 -o parallel_balanced test_mpi.c parallel_balanced.c -lm -std=c99 
 
 sequential:sequential.c test_mpi.c
@@ -15,3 +15,4 @@ sequential:sequential.c test_mpi.c
 
 clean:
 	rm -f *.o ${EXECS} *~ *core
+
