@@ -54,6 +54,7 @@ void master(int node_count, char init_mode)
 
         my_task = next_task;
         next_task++;
+        printf("Next task %d\n", next_task);
     }
 
     for (int i = 1; i < node_count; ++i)
@@ -147,7 +148,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         if (requested)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
-    printf("Next task %d\n", next_task);
+
     return next_task;
 }
 
