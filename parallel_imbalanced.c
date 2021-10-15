@@ -61,6 +61,7 @@ void master(int node_count, char init_mode)
 
     for (int i = 1; i < node_count; ++i){
         int ready = 0;
+        MPI_Status status;
         MPI_Test(&result_requests[i], &ready, &status);
         printf("Ready: %d, Source: %d, Tag: %d\n", ready, status.MPI_SOURCE, status.MPI_TAG);
     }
