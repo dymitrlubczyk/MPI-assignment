@@ -153,7 +153,7 @@ int get_stop(MPI_Request stop_request)
     int stop = 0;
 
     MPI_Test(&stop_request, &stop, MPI_STATUS_IGNORE);
-    printf("Got stop\n");
+    if(stop) printf("Got stop\n");
     return stop;
 }
 
@@ -163,8 +163,10 @@ int get_task(MPI_Request work_request, int *task)
 
     MPI_Test(&work_request, &ready, MPI_STATUS_IGNORE);
 
-    if (ready)
+    if (ready){
+        printf("Got task\n");
         MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
+    }
 
     return ready;
 }
