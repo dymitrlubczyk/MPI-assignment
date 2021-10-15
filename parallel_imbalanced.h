@@ -1,7 +1,7 @@
 #include "mpi.h"
 
 void master(int node_count, char init_mode);
-void worker(int node_count);
+void worker(int node_count, int id);
 void send_ready(int stop);
 void send_result(int stop, int result);
 int get_results(MPI_Request *result_requests, int node_count);

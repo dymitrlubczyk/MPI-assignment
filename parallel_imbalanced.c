@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &node_count);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
-    id == 0 ? master(node_count, init_mode) : worker(node_count);
+    id == 0 ? master(node_count, init_mode) : worker(node_count, id);
 
     printf("Node %d is done\n", id);
     MPI_Finalize();
@@ -64,7 +64,7 @@ void master(int node_count, char init_mode)
     printf("Execution time: %fs\n", end - start);
 }
 
-void worker(int node_count)
+void worker(int node_count, int id)
 {
     int result;
     int task_ready = 0;
@@ -91,7 +91,7 @@ void worker(int node_count)
         for(int i=0; i<TASK_SIZE; ++i)
             sum += task[i];
         
-        printf("Task sum %d\n", sum);
+        printf("Node %d Task sum %d\n",id ,sum);
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
