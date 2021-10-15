@@ -59,7 +59,7 @@ void master(int node_count, char init_mode)
     for (int i = 1; i < node_count; ++i)
         send_stop(i);
     
-    distribute_work(work_requests, A, tasks_count, next_task, node_count);distribute_work(work_requests, A, tasks_count, next_task, node_count);
+    distribute_work(work_requests, A, tasks_count, next_task, node_count);
     get_results(result_requests, node_count);
     
     double end = MPI_Wtime();
