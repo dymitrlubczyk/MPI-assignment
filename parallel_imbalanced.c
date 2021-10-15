@@ -71,10 +71,10 @@ void worker(int node_count, int id)
     int *task = calloc(TASK_SIZE, sizeof(int));
 
     MPI_Request work_request;
-    MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
+   // MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
     MPI_Request stop_request;
-    MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
+   // MPI_Irecv(&result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
     while (!stop)
     {
