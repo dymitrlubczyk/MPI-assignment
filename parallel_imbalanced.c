@@ -173,6 +173,7 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
     printf("Sending task %d to %d\n", task, node);
     MPI_Send(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD);
 
+    int *result = calloc(1, sizeof(int));
 
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, &work_request);
 }
