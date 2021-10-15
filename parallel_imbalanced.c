@@ -126,7 +126,7 @@ int get_results(MPI_Request *result_requests, int node_count)
         {
             counter += 1;
             MPI_Irecv(&result, 1, MPI_INT, i, RESULT_TAG, MPI_COMM_WORLD, &result_requests[i]);
-            prinf("Got result from node %d\n", i);
+            printf("Got result from node %d\n", i);
         }
     }
 
