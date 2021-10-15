@@ -178,15 +178,22 @@ void send_task(int node, int task, int *A, MPI_Request *work_request)
 }
 
 void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count){
-        
+    int stop = 1;
+    MPI_Request stop_requests = initialise_requests(node_count, STOP_TAG);
+
+
     for (int i = 1; i < node_count; ++i)
-        send_stop(i);
+        MPI_Isend(&stop, 1, MPI_INT, node, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
     get_results(result_requests, node_count);
     distribute_work(work_requests, A, tasks_count, next_task, node_count);
     free(result_requests);
     free(work_requests);
+
+    for (int i = 1; i < node_count; ++i)
+        MPI_Wait(&stop_request[i],MPI_STATUS_IGNORE);
     
+    free(stop_requests);
 }
 
 MPI_Request *initialise_requests(int node_count, int tag)
