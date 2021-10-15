@@ -78,16 +78,18 @@ int get_stop(MPI_Request stop_request)
 
 void send_stop(MPI_Request *result_requests, int node_count)
 {
+    int stop = 1;
+    MPI_Request *stop_requests = initialise_requests(node_count);
+    
     for (int i = 1; i < node_count; ++i)
-    {
-        int stop = 1;
-
-        MPI_Request stop_request;
-      
-        MPI_Isend(&stop, 1, MPI_INT, i, 100, MPI_COMM_WORLD, &stop_request);
-    }
+        MPI_Isend(&stop, 1, MPI_INT, i, 100, MPI_COMM_WORLD, &stop_requests[i]);
 
     get_results(result_requests, node_count);
+
+    for (int i = 1; i < node_count; ++i)
+        MPI_Wait(&stop_requests[i], MPI_STATUS_IGNORE);
+
+    free(stop_requests);
 }
 
 int get_results(MPI_Request *result_requests, int node_count)
@@ -130,11 +132,8 @@ int send_tasks(int *A, int N, int node_count)
     int master_task_size = N - (node_count - 1) * task_size;
 
     for (int i = 1; i < node_count; ++i)
-    {
-        MPI_Request task_request;
-        MPI_Isend(&A[master_task_size + (i - 1) * task_size], task_size, MPI_INT, i, 0, MPI_COMM_WORLD, &task_request);
+        MPI_Send(&A[master_task_size + (i - 1) * task_size], task_size, MPI_INT, i, 0, MPI_COMM_WORLD);
 
-    }
 
     return master_task_size;
 }
