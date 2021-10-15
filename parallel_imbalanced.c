@@ -169,13 +169,13 @@ int get_task(MPI_Request work_request, int *task)
     MPI_Status status;
 
     MPI_Test(&work_request, &ready, &status);
-    printf("From rank %d, with tag %d and error code %d.\n", 
+
+    if (ready)
+    {
+        printf("From rank %d, with tag %d and error code %d.\n",
                status.MPI_SOURCE,
                status.MPI_TAG,
                status.MPI_ERROR);
-    if (ready)
-    {
-        printf("Got task\n");
         MPI_Irecv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
     }
 
