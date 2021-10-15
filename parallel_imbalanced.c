@@ -109,7 +109,8 @@ void send_ready(int stop)
     if (!stop)
     {
         int ready = 1;
-        MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD);
+        MPI_Request ready_request;
+        MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
     }
 }
 
