@@ -81,8 +81,7 @@ void worker(int node_count, int id)
         printf("Task[0]: %d stop: %d\n", task[0], stop);
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
-            printf("Hello!\n");
-            printf("Node %d is testing %d", id, task[i]);
+            printf("Node %d is testing %d\n", id, task[i]);
             int result = test_imbalanced(task[i]);
             stop = get_stop(stop_request);
             send_result(stop, result);
