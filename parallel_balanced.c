@@ -60,10 +60,11 @@ void worker(int N, int R, int node_count, int id)
     MPI_Request stop_request;
     MPI_Irecv(&stop_result, 1, MPI_INT, 0, 100, MPI_COMM_WORLD, &stop_request);
 
-    for (int i = 0; i < task_size && !stop; ++i)
+    for (int i = 0; i < task_size && !stop; ++i){
         int result = test(task[i]);
         stop = get_stop(stop_request);
         send_result(stop, result);
+    }
 }
 
 int get_stop(MPI_Request stop_request)
