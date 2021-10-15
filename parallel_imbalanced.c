@@ -157,7 +157,7 @@ int get_stop(MPI_Request stop_request)
     return stop;
 }
 
-void get_task(int *task)
+void get_task(MPI_Request work_request, int *task)
 {
     int ready = 1;
     MPI_Request ready_request;
