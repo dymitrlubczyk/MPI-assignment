@@ -79,12 +79,13 @@ void worker(int node_count, int id)
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
-            stop = get_stop(stop, stop_request);
             int result = test_imbalanced(task[i]);
+            stop = get_stop(stop, stop_request);
             send_result(stop, result);
         }
         
         free(task);
+        stop = get_stop(stop, stop_request);
     }
 }
 
@@ -130,8 +131,10 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         MPI_Test(&work_requests[i], &requested, &status);
         printf("Asking for work: %d, Source: %d, Tag: %d\n", requested, status.MPI_SOURCE, status.MPI_TAG);
 
-        if (requested)
-            send_task(i, (next_task++)%node_count, A, &work_requests[i]);
+        if (requested){
+            int task = next_task < task_count ? next_task++ : 0;
+            send_task(i, task, A, &work_requests[i]);
+        }
     }
 
     return next_task;
