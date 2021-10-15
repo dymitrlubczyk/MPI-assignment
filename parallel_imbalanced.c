@@ -78,7 +78,7 @@ void worker(int node_count, int id)
     while (!stop)
     {
         task = get_task();
-        printf("Task size: %d stop: %d\n", TASK_SIZE, stop);
+        printf("Task[0]: %d stop: %d\n", task[0], stop);
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
             printf("Node %d is testing %d", id, task[i]);
