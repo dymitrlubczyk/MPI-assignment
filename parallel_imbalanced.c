@@ -116,12 +116,14 @@ void send_result(int stop, int result)
 
 int get_results(MPI_Request *result_requests, int node_count)
 {
-    int result, counter = 0;
+    int result = 0;
+    int counter = 0;
 
     for (int i = 1; i < node_count; ++i)
     {
         int ready = 0;
         MPI_Status status;
+        printf("Gettin result for %d\n", i);
         MPI_Test(&result_requests[i], &ready, &status);
 
         if (ready)
@@ -145,7 +147,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         if (requested)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
-
+    printf("Next task %d\n", next_task);
     return next_task;
 }
 
