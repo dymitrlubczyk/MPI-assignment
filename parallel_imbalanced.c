@@ -77,14 +77,14 @@ void worker(int node_count, int id)
     {
         task = get_task();
         stop = get_stop(stop_request);
-        
+
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
             int result = test_imbalanced(task[i]);
             stop = get_stop(stop_request);
             send_result(stop, result);
         }
-
+        free(task);
         stop = get_stop(stop_request);
     }
 }
@@ -187,7 +187,8 @@ void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, in
 
     get_results(result_requests, node_count);
     distribute_work(work_requests, A, tasks_count, next_task, node_count);
-
+    free(result_requests);
+    free(work_requests);
     
 }
 
