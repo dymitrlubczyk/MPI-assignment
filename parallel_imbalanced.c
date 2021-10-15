@@ -54,7 +54,7 @@ void master(int node_count, char init_mode)
 
         my_task = next_task;
         next_task++;
-        printf("Master side: %d next task", next_task);
+        printf("Master side: %d next task\n", next_task);
     }
 
     for (int i = 1; i < node_count; ++i)
