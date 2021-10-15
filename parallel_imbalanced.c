@@ -156,6 +156,7 @@ int get_stop(MPI_Request stop_request)
 
 int *get_task()
 {
+    printf("Receiving\n");
     int ready = 1;
     MPI_Request ready_request;
     MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
