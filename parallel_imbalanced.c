@@ -168,7 +168,7 @@ int* get_task()
 
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-    printf("Task received\n");
+    printf("Task received, first in buffer %d\n", task[0]);
 
 
     return task;
