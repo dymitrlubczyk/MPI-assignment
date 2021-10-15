@@ -144,7 +144,7 @@ int get_stop(int stop, MPI_Request stop_request)
 
     int flag = 0;
     MPI_Test(&stop_request, &flag, MPI_STATUS_IGNORE);
-
+    if(flag) printf("Got stop\n");
     return flag;
 }
 
