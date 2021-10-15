@@ -76,16 +76,16 @@ void worker(int node_count, int id)
     while (!stop)
     {
         task = get_task();
-        stop = get_stop(stop_request);
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
             int result = test_imbalanced(task[i]);
-            stop = get_stop(stop_request);
+            get_stop(stop, stop_request);
             send_result(stop, result);
         }
+        
         free(task);
-        stop = get_stop(stop_request);
+        get_stop(stop, stop_request);
     }
 }
 
@@ -138,13 +138,10 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
     return next_task;
 }
 
-int get_stop(MPI_Request stop_request)
+void get_stop(int stop, MPI_Request stop_request)
 {
-    int stop = 0;
-
+    if(stop) return;
     MPI_Test(&stop_request, &stop, MPI_STATUS_IGNORE);
-
-    return stop;
 }
 
 int *get_task()
