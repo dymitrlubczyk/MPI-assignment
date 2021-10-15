@@ -80,7 +80,9 @@ void worker(int node_count, int id)
     int sum;
     while (!stop)
     {
+        send_ready(stop);
         task_ready = 0;
+
         while (!stop && !task_ready)
         {
             stop = get_stop(stop_request);
@@ -91,7 +93,7 @@ void worker(int node_count, int id)
         for (int i = 0; i < TASK_SIZE; ++i)
             sum += task[i];
 
-        printf("Node %d Task sum %d\n", id, sum);
+        printf("Node %d task sum %d\n", id, sum);
 
         for (int i = 0; i < TASK_SIZE && !stop; ++i)
         {
@@ -99,8 +101,6 @@ void worker(int node_count, int id)
             stop = get_stop(stop_request);
             send_result(stop, result);
         }
-
-        send_ready(stop);
     }
 }
 
@@ -108,6 +108,7 @@ void send_ready(int stop)
 {
     if (!stop)
     {
+        printf("I am ready\n");
         int ready = 1;
         MPI_Request ready_request;
         MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &ready_request);
@@ -148,7 +149,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         int requested = 0;
         MPI_Test(&work_requests[i], &requested, MPI_STATUS_IGNORE);
         printf("Master side: node %d requested %d\n", i, requested);
-        if (requested || next_task < node_count)
+        if (requested)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
     }
 
