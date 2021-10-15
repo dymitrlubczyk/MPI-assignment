@@ -92,7 +92,7 @@ void worker(int node_count, int id)
 void send_result(int stop, int result)
 {
     if (!stop && result){
-        printf("Sending result\n")
+        printf("Sending result\n");
         MPI_Send(&result, 1, MPI_INT, 0, RESULT_TAG, MPI_COMM_WORLD);
     }
 }
