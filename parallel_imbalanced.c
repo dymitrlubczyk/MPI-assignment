@@ -126,6 +126,7 @@ int get_results(MPI_Request *result_requests, int node_count)
         {
             counter += 1;
             MPI_Irecv(&result, 1, MPI_INT, i, RESULT_TAG, MPI_COMM_WORLD, &result_requests[i]);
+            prinf("Got result from node %d\n", i);
         }
     }
 
@@ -138,7 +139,6 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
     {
         int requested = 0;
         MPI_Test(&work_requests[i], &requested, MPI_STATUS_IGNORE);
-        printf("Next tesk %d\n", next_task);
 
         if (requested || next_task < node_count)
             next_task < tasks_count ? send_task(i, next_task++, A, &work_requests[i]) : send_stop(i);
