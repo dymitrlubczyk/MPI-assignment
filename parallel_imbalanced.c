@@ -106,6 +106,7 @@ int get_results(MPI_Request *result_requests, int node_count)
         MPI_Status status;
 
         MPI_Test(&result_requests[i], &ready, &status);
+        printf("Ready: %d, Source: %d, Tag: %d\n", ready, status.MPI_SOURCE, status.MPI_TAG);
 
         if (ready)
         {
