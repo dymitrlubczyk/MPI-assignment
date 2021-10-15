@@ -6,6 +6,7 @@
 
 #include "mpi.h"
 #include "test_mpi.h"
+#define _USE_MATH_DEFINES
 
 
 
