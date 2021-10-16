@@ -133,7 +133,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         if (requested && status.MPI_SOURCE == i){
             printf("Asking for work: %d, Source: %d, Tag: %d\n", requested, status.MPI_SOURCE, status.MPI_TAG);
             int task = next_task < tasks_count ? next_task++ : 0;
-            send_task(i, task, A, &work_requests[i]);
+            work_request[i] = send_task(i, task, A);
         }
     }
 
@@ -176,14 +176,16 @@ void send_stop(int node)
     MPI_Isend(&stop, 1, MPI_INT, node, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 }
 
-void send_task(int node, int task, int *A, MPI_Request *work_request)
+MPI_Request send_task(int node, int task, int *A)
 {
     printf("Sending task %d to %d\n", task, node);
     MPI_Send(&A[task * TASK_SIZE], TASK_SIZE, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD);
 
     int *result = calloc(1, sizeof(int));
-
+    MPI_Request* work_request = calloc(1, sizeof(MPI_Request));
     MPI_Irecv(&result, 1, MPI_INT, node, WORK_TAG, MPI_COMM_WORLD, work_request);
+
+    return *work_request;
 }
 
 void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count){
