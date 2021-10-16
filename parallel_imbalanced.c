@@ -133,7 +133,7 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         if (requested && status.MPI_SOURCE == i){
             printf("Asking for work: %d, Source: %d, Tag: %d\n", requested, status.MPI_SOURCE, status.MPI_TAG);
             int task = next_task < tasks_count ? next_task++ : 0;
-            work_request[i] = send_task(i, task, A);
+            work_requests[i] = send_task(i, task, A);
         }
     }
 
