@@ -152,11 +152,15 @@ int get_stop(int stop, MPI_Request stop_request)
 int *get_task()
 {
     int ready = 1;
-    MPI_Send(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD);
+    MPI_Request work_request;
+
+    MPI_Isend(&ready, 1, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
     int *task = allocate_mem(TASK_SIZE);
 
     MPI_Recv(task, TASK_SIZE, MPI_INT, 0, WORK_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+    MPI_Wait(&work_request, MPI_STATUS_IGNORE);
 
     printf("Task received, first in buffer %d\n", task[0]);
 
