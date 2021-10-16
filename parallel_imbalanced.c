@@ -47,7 +47,7 @@ void master(int node_count, char init_mode)
     {
         for (int i = 0; i < TASK_SIZE && counter < R; ++i)
         {
-            next_task = distribute_work(work_requests, A, tasks_count, next_task, node_count);
+            next_task = distribute_work(&work_requests, A, tasks_count, next_task, node_count);
             counter += get_results(result_requests, node_count);
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
         }
@@ -121,7 +121,7 @@ int get_results(MPI_Request *result_requests, int node_count)
     return counter;
 }
 
-int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count)
+int distribute_work(MPI_Request **work_requests, int *A, int tasks_count, int next_task, int node_count)
 {
     for (int i = 1; i < node_count; ++i)
     {
@@ -133,8 +133,8 @@ int distribute_work(MPI_Request *work_requests, int *A, int tasks_count, int nex
         if (requested && status.MPI_SOURCE == i){
             printf("Asking for work: %d, Source: %d, Tag: %d\n", requested, status.MPI_SOURCE, status.MPI_TAG);
             int task = next_task < tasks_count ? next_task++ : 0;
-            work_requests = initialise_requests(node_count, WORK_TAG);
-            send_task(i, task, A, &work_request[i]);
+            *work_requests = initialise_requests(node_count, WORK_TAG);
+            send_task(i, task, A, &work_requests[i]);
         }
     }
 
