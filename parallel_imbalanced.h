@@ -9,6 +9,5 @@ int get_stop(int stop, MPI_Request stop_request);
 int* get_task();
 void send_stop(int node);
 void send_task(int node, int task, int *A);
-MPI_Request *initialise_requests(int node_count, int tag);
 int *initialise(char init_mode);
 void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count);
