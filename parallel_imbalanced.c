@@ -215,9 +215,6 @@ void finish(MPI_Request *result_request, MPI_Request *work_request, int *A, int 
     distribute_work(work_request, A, tasks_count, next_task, node_count);
     free(A);
 
-    for (int i = 1; i < node_count; ++i)
-        MPI_Wait(&stop_requests[i],MPI_STATUS_IGNORE);
-
 }
 
 MPI_Request *initialise_requests(int node_count, int tag)
