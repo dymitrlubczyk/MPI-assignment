@@ -103,7 +103,7 @@ void send_result(int stop, int result)
     }
 }
 
-int get_results(MPI_Request *result_requests, int node_count)
+int get_results(MPI_Request *result_request, int node_count)
 {
     int result = 0;
     int ready = 1; 
@@ -120,7 +120,9 @@ int get_results(MPI_Request *result_requests, int node_count)
         {
             printf("Result ready: %d, Source: %d, Tag: %d\n", ready, status.MPI_SOURCE, status.MPI_TAG);
             counter += 1;
-            MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, result_request);
+            MPI_Request new_requst;
+            MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, &new_request);
+            *result_request = new_request;
         }
     }
 
@@ -138,11 +140,13 @@ int distribute_work(MPI_Request *work_request, int *A, int tasks_count, int next
 
         MPI_Test(work_request, &requested, &status);
 
-        if (requested && status.MPI_SOURCE == i){
+        if (requested){
             printf("Asking for work, Source: %d, Tag: %d\n", status.MPI_SOURCE, status.MPI_TAG);
             int task = next_task < tasks_count ? next_task++ : 0;
             send_task(status.MPI_SOURCE, task, A);
-            MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, WORK_TAG, MPI_COMM_WORLD, work_request);
+            MPI_Request new_requst;
+            MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, WORK_TAG, MPI_COMM_WORLD, &new_request);
+            *work_request = new_request;
         }
     }
 
