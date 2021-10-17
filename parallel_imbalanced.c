@@ -203,23 +203,21 @@ void send_task(int node, int task, int *A)
 }
 
 void finish(MPI_Request *result_request, MPI_Request *work_request, int *A, int tasks_count, int next_task, int node_count){
-    int stop = 1;
-    MPI_Request* stop_requests = initialise_requests(node_count, STOP_TAG);
 
+    for (int i = 1; i < node_count; ++i){
+        int stop = 1;
+        MPI_Request stop_request;
+        MPI_Isend(&stop, 1, MPI_INT, i, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
-    for (int i = 1; i < node_count; ++i)
-        MPI_Isend(&stop, 1, MPI_INT, i, STOP_TAG, MPI_COMM_WORLD, &stop_requests[i]);
+    }
 
     get_results(result_request, node_count);
     distribute_work(work_request, A, tasks_count, next_task, node_count);
-    free(result_request);
-    free(work_request);
     free(A);
 
     for (int i = 1; i < node_count; ++i)
         MPI_Wait(&stop_requests[i],MPI_STATUS_IGNORE);
-    
-    free(stop_requests);
+
 }
 
 MPI_Request *initialise_requests(int node_count, int tag)
