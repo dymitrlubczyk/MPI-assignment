@@ -111,7 +111,6 @@ int get_results(MPI_Request *result_request, int node_count)
 
     while(ready)
     {
-        int ready = 0;
         MPI_Status status;
 
         printf("Looking for results\n");
@@ -125,6 +124,9 @@ int get_results(MPI_Request *result_request, int node_count)
             MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, &new_request);
             *result_request = new_request;
         }
+
+        else 
+            ready = 0;
     }
 
     return counter;
