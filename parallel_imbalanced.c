@@ -7,9 +7,11 @@
 
 const int N = 500;
 const int R = 100;
+
 const int WORK_TAG = 1;
 const int STOP_TAG = 2;
 const int RESULT_TAG = 3;
+
 const int TASK_SIZE = 10;
 
 int main(int argc, char *argv[])
@@ -38,12 +40,12 @@ void master(int node_count, char init_mode)
 
     int *A = initialise(init_mode);
 
-    MPI_Request result_request;
     int result;
+    MPI_Request result_request;
     MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, &result_request);
 
-    MPI_Request work_request;
     int work_result;
+    MPI_Request work_request;
     MPI_Irecv(&work_result, 1, MPI_INT, MPI_ANY_SOURCE, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
     double start = MPI_Wtime();
