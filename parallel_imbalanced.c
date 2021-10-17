@@ -121,7 +121,7 @@ int get_results(MPI_Request *result_request, int node_count)
         {
             printf("Result ready, Source: %d, Tag: %d\n", status.MPI_SOURCE, status.MPI_TAG);
             counter += 1;
-            MPI_Request new_requst;
+            MPI_Request new_request;
             MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, &new_request);
             *result_request = new_request;
         }
@@ -146,7 +146,9 @@ int distribute_work(MPI_Request *work_request, int *A, int tasks_count, int next
             printf("Asking for work, Source: %d, Tag: %d\n", status.MPI_SOURCE, status.MPI_TAG);
             int task = next_task < tasks_count ? next_task++ : 0;
             send_task(status.MPI_SOURCE, task, A);
-            MPI_Request new_requst;
+            
+            MPI_Request new_request;
+            int result;
             MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, WORK_TAG, MPI_COMM_WORLD, &new_request);
             *work_request = new_request;
         }
