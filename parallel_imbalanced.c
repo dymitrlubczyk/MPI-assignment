@@ -57,9 +57,9 @@ void master(int node_count, char init_mode)
             counter += test_imbalanced(A[TASK_SIZE * my_task + i]);
         }
 
+        printf("Counter: %d, done %d/%d\n", counter, next_task, tasks_count);
         my_task = next_task++;
 
-         printf("Counter: %d, done %d/%d\n", counter, next_task, tasks_count);
     }
 
     finish(&result_request, &work_request, A, tasks_count, next_task, node_count);
