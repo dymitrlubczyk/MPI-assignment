@@ -44,7 +44,7 @@ void master(int node_count, char init_mode)
     
     MPI_Request work_request;
     int work_result;
-    MPI_Irecv(&worK_result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, &result_request);
+    MPI_Irecv(&work_result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, &result_request);
 
     double start = MPI_Wtime();
     
@@ -63,7 +63,7 @@ void master(int node_count, char init_mode)
          printf("Counter: %d, done %d/%d\n", counter, next_task, tasks_count);
     }
 
-    finish(result_requests, work_requests, A, tasks_count, next_task, node_count);
+    finish(&result_request, &work_request, A, tasks_count, next_task, node_count);
     double end = MPI_Wtime();
 
      printf("Execution time: %fs\n", end - start);
@@ -192,7 +192,7 @@ void send_task(int node, int task, int *A)
 
 }
 
-void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, int tasks_count, int next_task, int node_count){
+void finish(MPI_Request *result_request, MPI_Request *work_request, int *A, int tasks_count, int next_task, int node_count){
     int stop = 1;
     MPI_Request* stop_requests = initialise_requests(node_count, STOP_TAG);
 
@@ -200,10 +200,10 @@ void finish(MPI_Request *result_requests, MPI_Request *work_requests, int *A, in
     for (int i = 1; i < node_count; ++i)
         MPI_Isend(&stop, 1, MPI_INT, i, STOP_TAG, MPI_COMM_WORLD, &stop_requests[i]);
 
-    get_results(result_requests, node_count);
-    distribute_work(work_requests, A, tasks_count, next_task, node_count);
-    free(result_requests);
-    free(work_requests);
+    get_results(result_request, node_count);
+    distribute_work(work_request, A, tasks_count, next_task, node_count);
+    free(result_request);
+    free(work_request);
     free(A);
 
     for (int i = 1; i < node_count; ++i)
