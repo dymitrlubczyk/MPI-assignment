@@ -44,7 +44,7 @@ void master(int node_count, char init_mode)
     
     MPI_Request work_request;
     int work_result;
-    MPI_Irecv(&work_result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, &result_request);
+    MPI_Irecv(&work_result, 1, MPI_INT, MPI_ANY_SOURCE, WORK_TAG, MPI_COMM_WORLD, &work_request);
 
     double start = MPI_Wtime();
     
@@ -114,11 +114,12 @@ int get_results(MPI_Request *result_request, int node_count)
         int ready = 0;
         MPI_Status status;
 
+        printf("Looking for results\n");
         MPI_Test(result_request, &ready, &status);
 
         if (ready)
         {
-            printf("Result ready: %d, Source: %d, Tag: %d\n", ready, status.MPI_SOURCE, status.MPI_TAG);
+            printf("Result ready, Source: %d, Tag: %d\n", status.MPI_SOURCE, status.MPI_TAG);
             counter += 1;
             MPI_Request new_requst;
             MPI_Irecv(&result, 1, MPI_INT, MPI_ANY_SOURCE, RESULT_TAG, MPI_COMM_WORLD, &new_request);
@@ -138,6 +139,7 @@ int distribute_work(MPI_Request *work_request, int *A, int tasks_count, int next
         requested = 0;
         MPI_Status status;
 
+        printf("Looking for work requests\n");
         MPI_Test(work_request, &requested, &status);
 
         if (requested){
