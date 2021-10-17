@@ -117,7 +117,7 @@ int get_results(MPI_Request *result_request, int node_count)
         printf("Looking for results\n");
         MPI_Test(result_request, &ready, &status);
 
-        if (ready)
+        if (ready && status.MPI_SOURCE>0 && status.MPI_SOURCE<node_count)
         {
             printf("Result ready, Source: %d, Tag: %d\n", status.MPI_SOURCE, status.MPI_TAG);
             counter += 1;
@@ -142,7 +142,7 @@ int distribute_work(MPI_Request *work_request, int *A, int tasks_count, int next
         printf("Looking for work requests\n");
         MPI_Test(work_request, &requested, &status);
 
-        if (requested){
+        if (requested && status.MPI_SOURCE>0 && status.MPI_SOURCE<node_count){
             printf("Asking for work, Source: %d, Tag: %d\n", status.MPI_SOURCE, status.MPI_TAG);
             int task = next_task < tasks_count ? next_task++ : 0;
             send_task(status.MPI_SOURCE, task, A);
