@@ -1,12 +1,14 @@
 # MPI Assignment #
 
-### To build just use Makefile, I've made it for you 🐱 ###
+#### To build just use Makefile! 
+#### Below you can see list of available programs with their arguments 
 
-Once you build you will see three programs 🤹🏻‍♂️
-* parallel_balanced - in takes one argument: 
-    * initialisation mode - *s* or *r*, sorted or random
-* parallel_balanced - in takes one argument: 
-    * initialisation mode - *s* or *r*, sorted or random
-* sequential - in takes two arguments: 
-    * initialisation mode - *s* or *r*, sorted or random 
-    * test function mode - *b* or *i*, balanced or imbalanced
+🐰 **parallel_balanced** 
+   * initialisation mode - *s* or *r*, sorted or random
+   
+🦍 **parallel_imbalanced**
+   * initialisation mode - *s* or *r*, sorted or random
+   
+🐢 **sequential**
+   * initialisation mode - *s* or *r*, sorted or random 
+   * test function mode - *b* or *i*, balanced or imbalanced
