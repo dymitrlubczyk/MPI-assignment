@@ -7,10 +7,12 @@
 #include "mpi.h"
 #include "test_mpi.h"
 
-int N = 500;
-int R = 100;
+const int M_PI = 3.1415; 
+
+
 
 int test(int x) {
+	int N = 500;
 	// Transform to a number beween 0 and 2 * pi.
 	double xd = ((double)x * (2 * M_PI) / N);
 
@@ -27,6 +29,7 @@ int test(int x) {
 }
 
 int test_imbalanced(int x) {
+	int N = 500;
 	// Transform to a number beween 0 and 2 * pi.
 	double xd = ((double)x * (2 * M_PI) / N);
 

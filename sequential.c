@@ -10,12 +10,13 @@ int main(int argc, char *argv[])
     const int N = 500;
     const int R = 100;
     char init_mode = argv[1][0];
+    char test_mode = argv[2][0];
     int *A = initialise(N, init_mode);
 
     clock_t start, end;
 
     start = clock();
-    int result = test_array(A, N, R);
+    test_array(A, N, R, test_mode);
     end = clock();
 
     double cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
@@ -31,17 +32,14 @@ int *initialise(int N, char init_mode)
     return A;
 }
 
-int test_array(int *A, int N, int R)
+void test_array(int *A, int N, int R, char test_mode)
 {
     int counter = 0;
 
-    for (int i = 0; i < N; ++i)
+    for (int i = 0; i < N && counter < R; ++i)
     {
-        if (test(A[i]) && ++counter >= R)
-        {
-            return 1;
-        }
+        counter += test_mode == 'b' ? test(A[i]) : test_imbalanced(A[i]);
+
     }
 
-    return 0;
 }
