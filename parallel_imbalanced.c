@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     id == 0 ? master(node_count, init_mode) : worker(node_count, id);
 
-    // printf("Node %d is done\n", id);
+    printf("Node %d is done\n", id);
     MPI_Finalize();
 
     return 0;
@@ -70,11 +70,11 @@ void master(int node_count, char init_mode)
 
 void worker(int node_count, int id)
 {
-    int stop_result;
     int stop = 0;
     int *task;
 
     MPI_Request stop_request;
+    int stop_result;
     MPI_Irecv(&stop_result, 1, MPI_INT, 0, STOP_TAG, MPI_COMM_WORLD, &stop_request);
 
     while (!stop)
